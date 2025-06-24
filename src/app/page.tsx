@@ -1,103 +1,84 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FaSun, FaMoon } from "react-icons/fa";
+import { useTheme } from "./components/ThemeProvider";
+import LogoLoader from "./components/Loader/LogoLoader";
+import ThemeToggle from "./components/ThemeToggle";
+import Navbar from "./components/Navbar";
+
+// MOCK function to check if user is logged in
+// Replace with your actual auth logic or API call
+function useIsLoggedIn() {
+  // For demo, try to read token from localStorage or your auth store
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    // Example: check for token in localStorage
+    const token = localStorage.getItem("token");
+    setLoggedIn(!!token);
+  }, []);
+
+  return loggedIn;
+}
+
+export default function HomePage() {
+  const router = useRouter();
+
+  const loggedIn = useIsLoggedIn();
+
+  // Handle Launch Chat click
+  function handleLaunchClick() {
+    if (loggedIn) {
+      router.push("/chat");
+    } else {
+      router.push("/auth/login");
+    }
+  }
+
+  // Render only when loggedIn state resolved (not null)
+  if (loggedIn === null) {
+    return (
+      <LogoLoader />
+    );
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main className="relative overflow-hidden flex flex-col items-center justify-center min-h-screen p-6 transition-colors duration-300 bg-white dark:bg-black">
+      <Navbar />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      {/* Glowing AI Blobs */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] bg-gradient-to-br from-pink-400 via-yellow-400 to-purple-500 opacity-30 rounded-full filter blur-3xl animate-ai-float1" />
+
+        <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-gradient-to-tr from-sky-400 via-cyan-500 to-teal-400 opacity-10 rounded-full filter blur-2xl animate-ai-float2" />
+
+        <div className="absolute top-[30%] right-[20%] w-[300px] h-[300px] bg-gradient-to-br from-indigo-400 to-purple-600 opacity-15 rounded-full filter blur-2xl animate-ai-float3" />
+      </div>
+      {/* Hero Section */}
+      <section className="z-10 text-center max-w-2xl px-4">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4 text-gray-900 dark:text-white">
+          Welcome to <span className="text-yellow-500">BuzzChat</span> 🚀
+        </h1>
+
+        <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-8">
+          A real-time chat and social app to stay connected with your people.
+          Group chats, friend requests, live reactions — all in one place.
+        </p>
+
+        <button
+          onClick={handleLaunchClick}
+          className="inline-block bg-yellow-400 hover:bg-yellow-500 cursor-pointer text-black text-base md:text-lg px-6 py-3 rounded-lg transition duration-200 shadow"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+          Launch Chat
+        </button>
+      </section>
+
+      {/* Footer / Credits */}
+      <footer className="z-10 mt-16 text-sm text-gray-500 dark:text-gray-400">
+        Made with ❤️ by the BuzzChat Team
       </footer>
-    </div>
+    </main>
   );
 }
