@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaGoogle, FaPhone } from "react-icons/fa";
 import { useAuth } from "../authContext";
 import { registerUser } from "../authAPI";
 import Link from "next/link";
@@ -16,12 +16,16 @@ type RegisterForm = {
   name: string;
   email: string;
   password: string;
+  phone_number: string;
 };
 
 const schema = Yup.object().shape({
   name: Yup.string().required("Name is required").min(3),
   email: Yup.string().required("Email is required").email("Invalid email"),
   password: Yup.string().required("Password is required").min(6),
+  phone_number: Yup.string()
+    .required("Phone number is required")
+    .matches(/^[0-9]{10}$/, "Phone number must be 10 digits"),
 });
 
 export default function RegisterPage() {
@@ -72,6 +76,19 @@ export default function RegisterPage() {
               className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400 outline-none"
             />
             {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+          </div>
+          {/* Phone Number */}
+          <div className="relative">
+            <FaPhone className="absolute left-3 top-3.5 text-gray-400 dark:text-gray-500" />
+            <input
+              type="tel"
+              placeholder="Mobile Number"
+              {...register("phone_number")}
+              className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400 outline-none"
+            />
+            {errors.phone_number && (
+              <p className="text-red-500 text-sm mt-1">{errors.phone_number.message}</p>
+            )}
           </div>
 
           {/* Email */}
