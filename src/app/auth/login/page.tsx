@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import Link from "next/link";
-import { loginUser } from "../authAPI";
 import { useAuth } from "../authContext";
 import { toast } from "sonner";
 import { useAuthRedirect } from "@/app/hooks/seAuthRedirect";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { loginRequest } from "@/redux/slices/authSlice";
 
 type LoginForm = {
     email: string;
@@ -27,7 +28,8 @@ export default function LoginPage() {
     const router = useRouter();
     const { setUser } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
-
+    const dispatch = useAppDispatch();
+    const { user, error, loading, token } = useAppSelector((state) => state.auth);
     const {
         register,
         handleSubmit,
@@ -36,16 +38,20 @@ export default function LoginPage() {
         resolver: yupResolver(schema),
     });
 
-    const onSubmit = async (data: LoginForm) => {
-        const res = await loginUser(data.email, data.password);
-        if (res.success) {
-            setUser(res.user);
-            localStorage.setItem("token", res.token || "demo-token");
-            toast.success("login successfully !!");
-            router.push("/chat");
-        } else {
-            return toast.error("Invalid email or password.");
+    useEffect(() => {
+        if (user) {
+            setUser(user);
+            localStorage.setItem('token', token || 'demo-token');
+            toast.success('Login successful!');
+            router.push('/chat');
         }
+        if (error) {
+            toast.error(error);
+        }
+    }, [user, error]);
+
+    const onSubmit = (data: LoginForm) => {
+        dispatch(loginRequest(data));
     };
 
     return (
@@ -98,9 +104,11 @@ export default function LoginPage() {
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="w-full bg-yellow-400 hover:bg-yellow-500 cursor-pointer text-black font-semibold py-2 rounded-lg transition"
+                        disabled={loading}
+                        className={`w-full ${loading ? 'bg-yellow-300 cursor-not-allowed' : 'bg-yellow-400 hover:bg-yellow-500 cursor-pointer'
+                            } text-black font-semibold py-2 rounded-lg transition`}
                     >
-                        Login
+                        {loading ? "Loading..." : "Login"}
                     </button>
                 </form>
 

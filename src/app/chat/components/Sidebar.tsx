@@ -5,12 +5,11 @@ import clsx from "clsx";
 import Image from "next/image";
 import { FiChevronDown, FiLogOut, FiUser, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import ChatList from "./ChatList";
-import { logoutUser } from "@/app/auth/authAPI";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import SearchPeople from "@/app/components/chat/SearchPeople";
 import ThemeToggle from "@/app/components/ThemeToggle";
+import { logoutRequest } from "@/redux/slices/authSlice";
+import { useAppDispatch } from "@/redux/hooks";
 
 
 const friends = [
@@ -43,7 +42,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarProps) {
-    const router = useRouter();
+    const dispatch = useAppDispatch()
     const [activeTab, setActiveTab] = useState<"friends" | "requests" | "groups">("friends");
     const [showDropdown, setShowDropdown] = useState(false);
     const [showChats, setShowChats] = useState(true);
@@ -69,14 +68,7 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
 
 
     const handleLogout = async () => {
-        const LogoutUser = await logoutUser()
-        if (LogoutUser.success) {
-            toast.success("Logout Successfully !!");
-            localStorage.removeItem("token");
-            return router.push('/')
-        } else {
-            toast.error("Something went wrong !!")
-        }
+        dispatch(logoutRequest());
     }
 
 
