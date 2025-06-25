@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { Toaster } from "sonner";
+import { store } from "../../redux/store";
+import { Provider } from "react-redux";
 
 
 type Theme = "light" | "dark";
@@ -55,10 +57,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <Toaster richColors position="top-center" />
-      {children}
-    </ThemeContext.Provider>
+    <Provider store={store}>
+      <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <Toaster richColors position="top-center" />
+        {children}
+      </ThemeContext.Provider>
+    </Provider>
   );
 }
 

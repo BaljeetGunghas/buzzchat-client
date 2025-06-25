@@ -5,29 +5,31 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
-import { useAuth } from "../authContext";
-import { registerUser } from "../authAPI";
+import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaGoogle, FaPhone } from "react-icons/fa";
 import Link from "next/link";
 import { useAuthRedirect } from "@/app/hooks/seAuthRedirect";
 import { toast } from "sonner";
 
-type RegisterForm = {
-  name: string;
-  email: string;
-  password: string;
-};
+import { registerRequest } from "@/redux/slices/authSlice";
+import { RegisterForm } from "../type";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+
+
 
 const schema = Yup.object().shape({
   name: Yup.string().required("Name is required").min(3),
   email: Yup.string().required("Email is required").email("Invalid email"),
   password: Yup.string().required("Password is required").min(6),
+  phone_number: Yup.string()
+    .required("Phone number is required")
+    .matches(/^[0-9]{10}$/, "Phone number must be 10 digits"),
 });
 
 export default function RegisterPage() {
   useAuthRedirect();
   const router = useRouter();
-  const { setUser } = useAuth();
+  const dispatch = useAppDispatch();
+  const { user, error, loading ,token } = useAppSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -38,14 +40,21 @@ export default function RegisterPage() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data: RegisterForm) => {
-    const res = await registerUser(data);
-    if (res.success) {
-      setUser(res.user);
-      localStorage.setItem("token", res.token);
-      toast.success("Registration successfully !!");
-      router.push("/chat");
-    }
+
+useEffect(() => {
+  if (user) {
+    localStorage.setItem('token', token ? token : ''); // store token on successful login
+    toast.success("Registration successful!");
+    router.push("/chat");
+  }
+  if (error) {
+    toast.error(error);
+  }
+}, [user, error]);
+
+
+  const onSubmit = (data: RegisterForm) => {
+    dispatch(registerRequest(data));
   };
 
   return (
@@ -72,6 +81,19 @@ export default function RegisterPage() {
               className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400 outline-none"
             />
             {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+          </div>
+          {/* Phone Number */}
+          <div className="relative">
+            <FaPhone className="absolute left-3 top-3.5 text-gray-400 dark:text-gray-500" />
+            <input
+              type="tel"
+              placeholder="Mobile Number"
+              {...register("phone_number")}
+              className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400 outline-none"
+            />
+            {errors.phone_number && (
+              <p className="text-red-500 text-sm mt-1">{errors.phone_number.message}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -107,9 +129,11 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            className="w-full bg-yellow-400 hover:bg-yellow-500 cursor-pointer text-black font-semibold py-2 rounded-lg transition"
+            disabled={loading}
+            className={`w-full bg-yellow-400 hover:bg-yellow-500 cursor-pointer text-black font-semibold py-2 rounded-lg transition ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
 

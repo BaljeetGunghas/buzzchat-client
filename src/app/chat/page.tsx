@@ -1,18 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import ChatList from "./components/ChatList";
 import MessageWindow from "./components/MessageWindow";
 import MessageInput from "./components/MessageInput";
 import { FaBars } from "react-icons/fa";
+import socket from "../socket";
 
 export default function ChatPage() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [activeChatFriendId, setActiveChatFriendId] = useState<number | null>(null);
 
   const toggleSidebar = () => setSidebarVisible((v) => !v);
+
+    useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected with id:", socket.id);
+      // Join with userId (replace with real user id)
+      socket.emit("join", "user123");
+    });
+
+    socket.on("receive_message", (data) => {
+      console.log("Message received:", data);
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("receive_message");
+    };
+  }, []);
+
 
   const handleSelectFriend = (friendId: number) => {
     setActiveChatFriendId(friendId);
