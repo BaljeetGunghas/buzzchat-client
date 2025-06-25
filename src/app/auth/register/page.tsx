@@ -6,18 +6,15 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaGoogle, FaPhone } from "react-icons/fa";
-import { useAuth } from "../authContext";
-import { registerUser } from "../authAPI";
 import Link from "next/link";
 import { useAuthRedirect } from "@/app/hooks/seAuthRedirect";
 import { toast } from "sonner";
 
-type RegisterForm = {
-  name: string;
-  email: string;
-  password: string;
-  phone_number: string;
-};
+import { registerRequest } from "@/redux/slices/authSlice";
+import { RegisterForm } from "../type";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+
+
 
 const schema = Yup.object().shape({
   name: Yup.string().required("Name is required").min(3),
@@ -31,7 +28,8 @@ const schema = Yup.object().shape({
 export default function RegisterPage() {
   useAuthRedirect();
   const router = useRouter();
-  const { setUser } = useAuth();
+  const dispatch = useAppDispatch();
+  const { user, error, loading ,token } = useAppSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -42,14 +40,21 @@ export default function RegisterPage() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data: RegisterForm) => {
-    const res = await registerUser(data);
-    if (res.success) {
-      setUser(res.user);
-      localStorage.setItem("token", res.token);
-      toast.success("Registration successfully !!");
-      router.push("/chat");
-    }
+
+useEffect(() => {
+  if (user) {
+    localStorage.setItem('token', token ? token : ''); // store token on successful login
+    toast.success("Registration successful!");
+    router.push("/chat");
+  }
+  if (error) {
+    toast.error(error);
+  }
+}, [user, error]);
+
+
+  const onSubmit = (data: RegisterForm) => {
+    dispatch(registerRequest(data));
   };
 
   return (
@@ -124,9 +129,11 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            className="w-full bg-yellow-400 hover:bg-yellow-500 cursor-pointer text-black font-semibold py-2 rounded-lg transition"
+            disabled={loading}
+            className={`w-full bg-yellow-400 hover:bg-yellow-500 cursor-pointer text-black font-semibold py-2 rounded-lg transition ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
