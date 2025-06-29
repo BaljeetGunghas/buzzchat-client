@@ -2,10 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaSun, FaMoon } from "react-icons/fa";
-import { useTheme } from "./components/ThemeProvider";
 import LogoLoader from "./components/Loader/LogoLoader";
-import ThemeToggle from "./components/ThemeToggle";
 import Navbar from "./components/Navbar";
 
 // MOCK function to check if user is logged in

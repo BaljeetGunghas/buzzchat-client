@@ -21,11 +21,17 @@ body {
 
 /* Customize scrollbar */
 .scrollbar-thin::-webkit-scrollbar {
-  height: 6px;
+  height: 4px;
 }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: #facc15; /* yellow-400 */
+  background-color: #b9b9b8; /* yellow-400 */
   border-radius: 10px;
+}
+
+@layer base {
+  button {
+    @apply cursor-pointer;
+  }
 }
 
 @layer utilities {

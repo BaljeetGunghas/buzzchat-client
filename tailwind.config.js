@@ -6,12 +6,18 @@ export default {
   ],
   darkMode: "class", // important for dark/light toggle
   theme: {
-  extend: {
-    fontFamily: {
-      sans: "var(--font-geist-sans)",
-      mono: "var(--font-geist-mono)",
+    extend: {
+      fontFamily: {
+        sans: "var(--font-geist-sans)",
+        mono: "var(--font-geist-mono)",
+      },
     },
   },
-},
-  plugins: [],
+  plugins: [
+    function ({ addBase }) {
+      addBase({
+        button: { cursor: "pointer", },
+      });
+    },
+  ],
 };

@@ -10,7 +10,6 @@ export function useAuthRedirect() {
     const token = localStorage.getItem("token");
 
     if (token) {
-      // If token exists, user shouldn't access login or register
       router.replace("/chat");
     }
   }, []);

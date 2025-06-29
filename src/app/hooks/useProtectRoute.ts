@@ -11,7 +11,7 @@ export function useProtectRoute() {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      router.replace("/auth/login");
+      router.push("/auth/login");
     } else {
       setLoading(false);
     }

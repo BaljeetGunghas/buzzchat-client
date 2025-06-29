@@ -3,19 +3,19 @@
 import { useState } from "react";
 import { FaPaperPlane, FaSmile } from "react-icons/fa";
 import EmojiPicker from "emoji-picker-react";
-import { useTheme } from "@/app/components/ThemeProvider";
 
-export default function MessageInput() {
+interface Props {
+  onSendMessage: (message: string) => void;
+}
+
+export default function MessageInput({ onSendMessage }: Props) {
   const [message, setMessage] = useState("");
   const [showPicker, setShowPicker] = useState(false);
-  const { theme} = useTheme();
-
-
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
-    // Future: Send to backend/socket
+    onSendMessage(message.trim());
     setMessage("");
   };
 
@@ -26,11 +26,9 @@ export default function MessageInput() {
 
   return (
     <div className="relative">
-      {/* Emoji Picker Dropdown */}
       {showPicker && (
         <div className="absolute bottom-16 left-3 z-50">
-          <EmojiPicker
-            onEmojiClick={handleEmojiClick}          />
+          <EmojiPicker onEmojiClick={handleEmojiClick} />
         </div>
       )}
 
@@ -38,7 +36,6 @@ export default function MessageInput() {
         onSubmit={handleSend}
         className="flex items-center gap-3 p-4 border-t border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
       >
-        {/* Emoji Button */}
         <button
           type="button"
           onClick={() => setShowPicker(!showPicker)}
@@ -48,7 +45,6 @@ export default function MessageInput() {
           <FaSmile size={24} />
         </button>
 
-        {/* Input Field */}
         <input
           type="text"
           placeholder="Type a message..."
@@ -57,7 +53,6 @@ export default function MessageInput() {
           className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full px-4 py-2 outline-none text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400"
         />
 
-        {/* Send Button */}
         <button
           type="submit"
           className="bg-yellow-400 hover:bg-yellow-500 text-black rounded-full p-3 transition"

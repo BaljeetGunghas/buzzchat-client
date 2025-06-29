@@ -1,77 +1,94 @@
 "use client";
 
-import { FaCircle } from "react-icons/fa";
-
-const chats = [
-  {
-    id: 1,
-    name: "Bob",
-    userid:1,
-    lastMessage: "Hey, how’s it going?",
-    time: "2:45 PM",
-    online: true,
-    unreadCount: 2,
-  },
-  {
-    id: 2,
-    name: "Work Group",
-    userid:3,
-    lastMessage: "Meeting starts at 4pm",
-    time: "1:15 PM",
-    online: false,
-    unreadCount: 0,
-  },
-  {
-    id: 3,
-    name: "Charlie",
-    userid:4,
-    lastMessage: "Got the files, thanks!",
-    time: "Yesterday",
-    online: true,
-    unreadCount: 5,
-  },
-];
+import { useEffect, useState } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { getUserConversationsChatList } from "@/app/API/conversationsAPI";
+import { ChatListJsonResponse } from "@/app/API/types/conversation";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
 interface Props {
-    onSelectFriend: (friendId: number) => void;
+  onSelectFriend: (friendId: string) => void;
+  userId: string;
 }
 
-export default function ChatList({ onSelectFriend }: Props) {
+export default function ChatList({ onSelectFriend, userId }: Props) {
+  const { chats, loading } = useSelector(
+    (state: RootState) => state.chatList
+  );
+
+
+
   return (
     <div className="overflow-y-auto h-full p-2 space-y-3 bg-gray-50 dark:bg-gray-800">
-      <ul className="flex flex-col space-y-2 ">
-        {chats.map((chat) => (
-          <li
-            key={chat.id}
-            onClick={()=>onSelectFriend(chat.userid)}
-            className="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-600 transition"
-          >
-            <div className="flex items-center gap-3">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-black ${
-                  chat.online ? "bg-green-400" : "bg-gray-400"
-                }`}
-              >
-                {chat.name.charAt(0)}
-              </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-gray-900 dark:text-white">{chat.name}</span>
-                <span className="text-xs text-gray-600 dark:text-gray-400 truncate max-w-[180px]">
-                  {chat.lastMessage}
-                </span>
-              </div>
-            </div>
+      <ul className="flex flex-col space-y-2">
+        {chats?.map((chat) => {
+          const user = chat.participants;
+          if (!user) return null;
 
-            <div className="flex flex-col items-end space-y-1">
-              <span className="text-xs text-gray-500 dark:text-gray-300">{chat.time}</span>
-              {chat.unreadCount > 0 && (
-                <span className="text-xs bg-yellow-400 text-black px-2 rounded-full font-semibold">
-                  {chat.unreadCount}
-                </span>
-              )}
-            </div>
-          </li>
-        ))}
+          return (
+            <li
+              key={chat._id}
+              onClick={() => onSelectFriend(user._id)}
+              className="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-600 transition"
+            >
+              {/* Left: Profile + Name + Last Message */}
+              <div className="flex items-center gap-3">
+                {/* Avatar with status */}
+                <div className="relative w-10 h-10">
+                  <img
+                    src={
+                      user.profile_picture ||
+                      (user.gender === "F"
+                        ? "/images/default-f.png"
+                        : "/images/default-m.png")
+                    }
+                    alt={user.name}
+                    className="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-gray-600"
+                  />
+                  <span
+                    className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                      } border-white dark:border-gray-900`}
+                  />
+                </div>
+
+                {/* Name + Last Message */}
+                <div className="flex flex-col">
+                  <span
+                    className="font-semibold text-gray-900 dark:text-white max-w-[120px] truncate"
+                    title={user.name}
+                  >
+                    {user.name}
+                  </span>
+
+                  {/* Last message with "You:" if sentByMe */}
+                  <span className="text-xs text-gray-600 dark:text-gray-400 max-w-[160px] truncate flex items-center gap-1">
+                    {chat.sentByMe && (
+                      <span className="text-yellow-500 font-medium">You:</span>
+                    )}
+                    {chat.lastMessage || "No messages yet"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right: Time + Unread */}
+              <div className="flex flex-col items-end space-y-1">
+                {chat.lastMessageTime && (
+                  <span className="text-xs text-gray-500 dark:text-gray-300">
+                    {formatDistanceToNow(new Date(chat.lastMessageTime), {
+                      addSuffix: true,
+                    })}
+                  </span>
+                )}
+                {!chat.isRead && !chat.sentByMe && (
+                  <span className="text-xs bg-yellow-400 text-black px-2 rounded-full font-semibold">
+                    1
+                  </span>
+                )}
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

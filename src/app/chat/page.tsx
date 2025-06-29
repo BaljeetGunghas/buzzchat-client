@@ -1,40 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
-import ChatList from "./components/ChatList";
 import MessageWindow from "./components/MessageWindow";
-import MessageInput from "./components/MessageInput";
 import { FaBars } from "react-icons/fa";
-import socket from "../socket";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "@/redux/hooks";
 
 export default function ChatPage() {
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [activeChatFriendId, setActiveChatFriendId] = useState<number | null>(null);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [activeChatFriendId, setActiveChatFriendId] = useState<string | null>(null);
 
   const toggleSidebar = () => setSidebarVisible((v) => !v);
 
-    useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected with id:", socket.id);
-      // Join with userId (replace with real user id)
-      socket.emit("join", "user123");
-    });
-
-    socket.on("receive_message", (data) => {
-      console.log("Message received:", data);
-    });
-
-    return () => {
-      socket.off("connect");
-      socket.off("receive_message");
-    };
-  }, []);
-
-
-  const handleSelectFriend = (friendId: number) => {
+  const handleSelectFriend = (friendId: string) => {
     setActiveChatFriendId(friendId);
+    setSidebarVisible(false)
   };
 
   return (
@@ -57,19 +41,14 @@ export default function ChatPage() {
 
       {/* Main Chat Area */}
       <div className="flex flex-col flex-1 md:ml-full">
-        <Header />
-        {/* 
-          For demo: Pass friend id as prop to MessageWindow to show relevant chat.
-          Currently, MessageWindow is static, you can later extend it to load chat data dynamically 
-        */}
-        {activeChatFriendId ? (
-          <MessageWindow key={activeChatFriendId} />
+        {activeChatFriendId && <Header friendId={activeChatFriendId} />}
+        {activeChatFriendId && user?._id ? (
+          <MessageWindow key={activeChatFriendId} friendId={activeChatFriendId} userId={user?._id} />
         ) : (
           <div className="flex-1 flex items-center justify-center text-gray-500 dark:text-gray-400">
             Select a friend to start chatting.
           </div>
         )}
-        <MessageInput />
       </div>
     </div>
   );

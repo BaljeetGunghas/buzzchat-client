@@ -29,7 +29,7 @@ export default function RegisterPage() {
   useAuthRedirect();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { user, error, loading ,token } = useAppSelector((state) => state.auth);
+  const { user, error, loading, token } = useAppSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -41,16 +41,16 @@ export default function RegisterPage() {
   });
 
 
-useEffect(() => {
-  if (user) {
-    localStorage.setItem('token', token ? token : ''); // store token on successful login
-    toast.success("Registration successful!");
-    router.push("/chat");
-  }
-  if (error) {
-    toast.error(error);
-  }
-}, [user, error]);
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('token', token ? token : ''); // store token on successful login
+      toast.success("Registration successful!");
+      router.push("/profile/edit");
+    }
+    if (error) {
+      toast.error(error);
+    }
+  }, [user, error]);
 
 
   const onSubmit = (data: RegisterForm) => {
@@ -58,7 +58,16 @@ useEffect(() => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-100 via-white to-yellow-50 dark:from-black dark:via-gray-900 dark:to-gray-800 p-4">
+    <main className="relative overflow-hidden flex flex-col items-center justify-center min-h-screen p-6 transition-colors duration-300 bg-white dark:bg-black">
+
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] bg-gradient-to-br from-pink-400 via-yellow-400 to-purple-500 opacity-30 rounded-full filter blur-3xl animate-ai-float1" />
+
+        <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-gradient-to-tr from-sky-400 via-cyan-500 to-teal-400 opacity-10 rounded-full filter blur-2xl animate-ai-float2" />
+
+        <div className="absolute top-[30%] right-[20%] w-[300px] h-[300px] bg-gradient-to-br from-indigo-400 to-purple-600 opacity-15 rounded-full filter blur-2xl animate-ai-float3" />
+      </div>
+
       <div
         className="w-full max-w-md bg-white dark:bg-gray-900 p-8 rounded-xl shadow-xl border border-yellow-300 dark:border-yellow-500"
         data-aos="fade-up"
@@ -88,6 +97,8 @@ useEffect(() => {
             <input
               type="tel"
               placeholder="Mobile Number"
+              maxLength={10}
+              minLength={10}
               {...register("phone_number")}
               className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400 outline-none"
             />
@@ -161,6 +172,6 @@ useEffect(() => {
           </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
