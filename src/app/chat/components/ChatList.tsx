@@ -1,19 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { getUserConversationsChatList } from "@/app/API/conversationsAPI";
-import { ChatListJsonResponse } from "@/app/API/types/conversation";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import Image from "next/image";
 
 interface Props {
   onSelectFriend: (friendId: string) => void;
   userId: string;
 }
 
-export default function ChatList({ onSelectFriend, userId }: Props) {
-  const { chats, loading } = useSelector(
+export default function ChatList({ onSelectFriend }: Props) {
+  const { chats } = useSelector(
     (state: RootState) => state.chatList
   );
 
@@ -36,13 +34,15 @@ export default function ChatList({ onSelectFriend, userId }: Props) {
               <div className="flex items-center gap-3">
                 {/* Avatar with status */}
                 <div className="relative w-10 h-10">
-                  <img
+                  <Image
                     src={
                       user.profile_picture ||
                       (user.gender === "F"
                         ? "/images/default-f.png"
                         : "/images/default-m.png")
                     }
+                    width={40}
+                    height={40}  
                     alt={user.name}
                     className="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-gray-600"
                   />

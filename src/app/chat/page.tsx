@@ -7,7 +7,6 @@ import MessageWindow from "./components/MessageWindow";
 import { FaBars } from "react-icons/fa";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "@/redux/hooks";
 
 export default function ChatPage() {
   const user = useSelector((state: RootState) => state.auth.user);
