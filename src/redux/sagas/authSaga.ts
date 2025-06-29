@@ -35,6 +35,8 @@ function* handleLogin(action: PayloadAction<LoginForm>) {
     if (output === 1 && jsonResponse) {
       yield put(loginSuccess({ user: jsonResponse, token }));
       localStorage.setItem('token', token);
+      localStorage.setItem('user',JSON.stringify(jsonResponse) );
+
     } else {
       yield put(loginFailure(message || 'Login failed'));
     }
@@ -58,6 +60,7 @@ function* handleRegister(
     if (output === 1 && jsonResponse) {
       yield put(registerSuccess({ user: jsonResponse, token }));
       localStorage.setItem('token', token);
+      localStorage.setItem('user',JSON.stringify(jsonResponse) );
     } else {
       yield put(registerFailure(message || 'Registration failed'));
     }
@@ -77,6 +80,7 @@ export function* handleLogout(): Generator<any, void, { success: boolean; messag
       yield put(logoutSuccess());
       toast.success('Logout Successfully !!');
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
       window.location.href = '/'; // or use router in component
     } else {
       yield put(logoutFailure(response.message || 'Logout failed'));

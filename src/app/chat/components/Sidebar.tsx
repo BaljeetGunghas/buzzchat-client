@@ -10,39 +10,22 @@ import SearchPeople from "@/app/components/chat/SearchPeople";
 import ThemeToggle from "@/app/components/ThemeToggle";
 import { logoutRequest } from "@/redux/slices/authSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
+import HorizontalUserList from "./HorizontalUserList";
 
-
-const friends = [
-    {
-        id: 1,
-        name: "Alice",
-        online: true,
-        avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-    },
-    {
-        id: 2,
-        name: "Bob",
-        online: false,
-        avatar: "https://randomuser.me/api/portraits/men/45.jpg",
-    },
-    {
-        id: 3,
-        name: "Charlie",
-        online: true,
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    },
-
-    // Add more friends as needed
-];
 
 interface SidebarProps {
     visible: boolean;
     onClose: () => void;
-    onSelectFriend: (friendId: number) => void;
+    onSelectFriend: (friendId: string) => void;
 }
 
 export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarProps) {
     const dispatch = useAppDispatch()
+    const user = useSelector((state: RootState) => state.auth.user);
+    const onLineUserProfile = useSelector((state: RootState) => state.onlineUser.userProfiles);
+
     const [activeTab, setActiveTab] = useState<"friends" | "requests" | "groups">("friends");
     const [showDropdown, setShowDropdown] = useState(false);
     const [showChats, setShowChats] = useState(true);
@@ -52,7 +35,9 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
 
     const currentUser = {
         name: "You",
-        avatar: "https://randomuser.me/api/portraits/men/75.jpg",
+        avatar: user?.profile_picture ? user.profile_picture : user?.gender === "F"
+            ? "/images/default-f.png"
+            : "/images/default-m.png",
     };
 
     // Close dropdown if clicked outside
@@ -108,11 +93,11 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
                             className="flex items-center gap-1 cursor-pointer"
                         >
                             <Image
-                                src={currentUser.avatar}
+                                src={`${currentUser.avatar}`}
                                 alt="You"
                                 width={45}
                                 height={45}
-                                className="rounded-full border-2 border-yellow-500"
+                                className="rounded-full border-2 border-yellow-500 object-cover w-12 h-12"
                             />
                             <FiChevronDown className="text-gray-600 dark:text-white" />
                         </button>
@@ -151,39 +136,11 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
 
                 {/* Horizontal Friends List */}
                 {activeTab === "friends" && (
-                    <div className="relative">
-                        <div className="flex overflow-x-auto space-x-4 pb-2 pr-2 scrollbar-thin scrollbar-thumb-yellow-400 scrollbar-track-transparent">
-                            {friends.map((friend) => (
-                                <button
-                                    key={friend.id}
-                                    onClick={() => {
-                                        onSelectFriend(friend.id);
-                                        onClose();
-                                    }}
-                                    className="flex flex-col items-center min-w-[64px] cursor-pointer"
-                                >
-                                    <div className="relative w-16 h-16">
-                                        <Image
-                                            src={friend.avatar}
-                                            alt={friend.name}
-                                            width={64}
-                                            height={64}
-                                            className="rounded-full object-cover border-2 border-yellow-400"
-                                        />
-                                        <span
-                                            className={clsx(
-                                                "absolute bottom-0 right-0 block w-3 h-3 rounded-full border-2 border-white dark:border-gray-900",
-                                                friend.online ? "bg-green-500" : "bg-gray-400"
-                                            )}
-                                        />
-                                    </div>
-                                    <span className="mt-1 text-xs text-center text-gray-700 dark:text-gray-300">
-                                        {friend.name}
-                                    </span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                    <HorizontalUserList
+                        users={onLineUserProfile ?? []}
+                        onSelectUser={onSelectFriend}
+                        onClose={onClose}
+                    />
                 )}
 
 
@@ -219,14 +176,14 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
                         {showChats ? <FiChevronLeft className="text-xl font-semibold" /> : <FiChevronRight className="text-xl font-semibold" />}
                     </button>
                 </div>
-                {showChats && <ChatList onSelectFriend={onSelectFriend} />}
+                {showChats && user?._id && <ChatList onSelectFriend={onSelectFriend} userId={user?._id} />}
 
 
 
-                     {/* Theme Toggle */}
-                      <div className="absolute bottom-4 right-4 z-10">
-                      <ThemeToggle />
-                      </div>
+                {/* Theme Toggle */}
+                <div className="absolute bottom-4 right-4 z-10">
+                    <ThemeToggle />
+                </div>
 
             </aside>
         </>

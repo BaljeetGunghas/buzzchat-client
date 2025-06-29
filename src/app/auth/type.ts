@@ -18,6 +18,8 @@ export interface User {
   profile_picture: string;
   status: string;
   isVerified: boolean;
+  gender: "M" | "F" | null; // Gender can be "M", "F", or null
+  date_of_birth?: string;   // Optional if not always present
   lastLogin?: string;
   createdAt?: string;
   updatedAt?: string;

@@ -62,3 +62,40 @@ export const logoutUser = async (): Promise<{
     };
   }
 };
+
+
+interface ResSetPasswordResponse {
+  status: number,
+  message: string,
+  jsonResponse: null,
+  output: number
+}
+
+
+export const resetPassword = async (email: string): Promise<ResSetPasswordResponse> => {
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}auth/forgot-password`,
+      { email },
+      { withCredentials: true }
+    );
+
+    return {
+      status: response.status,
+      message: response.data.message,
+      jsonResponse: null,
+      output: 1,
+    };
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || 'Failed to request password reset';
+    const status = error.response?.status || 500;
+
+    return {
+      status,
+      message,
+      jsonResponse: null,
+      output: 0,
+    };
+  }
+};
