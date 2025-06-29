@@ -25,6 +25,8 @@ export default function ForgotPasswordPage() {
         toast.error(res.message);
       }
     } catch (err) {
+      console.log(err);
+      
       toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);

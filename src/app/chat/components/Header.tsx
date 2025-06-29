@@ -4,7 +4,6 @@ import { User } from "@/app/auth/type";
 import ChatActions from "./HeaderOptions";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import axiosInstance from "@/app/utils/axiosInstance";
 import { getFrindProfile } from "@/app/API/userAPI";
 
 
