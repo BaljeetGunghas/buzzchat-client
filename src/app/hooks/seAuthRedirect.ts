@@ -7,10 +7,11 @@ export function useAuthRedirect() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = window.localStorage.getItem("token");  // <-- inside useEffect
 
     if (token) {
       router.replace("/chat");
-    }
-  }, []);
+    } 
+    
+  }, [router]);
 }

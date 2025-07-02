@@ -27,7 +27,7 @@ const chatListSlice = createSlice({
   name: "chatList",
   initialState,
   reducers: {
-    fetchChatsRequest(state, action: PayloadAction<string>) {
+    fetchChatsRequest(state, _action: PayloadAction<string>) {
       state.loading = true;
       state.error = null;
     },

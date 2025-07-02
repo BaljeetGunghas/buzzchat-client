@@ -23,6 +23,8 @@ export const getOnlineUserProfiles = async (userIds: string[]): Promise<User[]> 
       "user/status/online",
       { userIds }
     );
+    console.log(response.data);
+    
     return response.data.jsonResponse;
   } catch (error) {
     console.error("Failed to fetch online user profiles", error);

@@ -10,7 +10,6 @@ import {
   logoutSuccess,
   logoutFailure,
   logoutRequest,
-  
 } from '../slices/authSlice';
 
 import { PayloadAction } from '@reduxjs/toolkit';
@@ -35,22 +34,23 @@ function* handleLogin(action: PayloadAction<LoginForm>) {
     if (output === 1 && jsonResponse) {
       yield put(loginSuccess({ user: jsonResponse, token }));
       localStorage.setItem('token', token);
-      localStorage.setItem('user',JSON.stringify(jsonResponse) );
-
+      localStorage.setItem('user', JSON.stringify(jsonResponse));
     } else {
       yield put(loginFailure(message || 'Login failed'));
     }
-  } catch (error: any) {
-    yield put(loginFailure(error.message || 'Login error'));
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      yield put(loginFailure(error.message));
+    } else {
+      yield put(loginFailure('Login error'));
+    }
   } finally {
     yield put(setLoading(false));
   }
 }
 
 // 📝 Handle Register
-function* handleRegister(
-  action: PayloadAction<RegisterForm>
-): Generator<any, void, RegisterResponse> {
+function* handleRegister(action: PayloadAction<RegisterForm>): Generator {
   try {
     yield put(setLoading(true));
 
@@ -60,38 +60,40 @@ function* handleRegister(
     if (output === 1 && jsonResponse) {
       yield put(registerSuccess({ user: jsonResponse, token }));
       localStorage.setItem('token', token);
-      localStorage.setItem('user',JSON.stringify(jsonResponse) );
+      localStorage.setItem('user', JSON.stringify(jsonResponse));
     } else {
       yield put(registerFailure(message || 'Registration failed'));
     }
-  } catch (err: any) {
-    yield put(registerFailure(err.message || 'Registration error'));
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      yield put(registerFailure(err.message));
+    } else {
+      yield put(registerFailure('Registration error'));
+    }
   } finally {
     yield put(setLoading(false));
   }
 }
 
-
-export function* handleLogout(): Generator<any, void, { success: boolean; message: string }> {
+// 🚪 Handle Logout
+function* handleLogout(): Generator {
   try {
-    const response = yield call(logoutUser);
-
-    if (response.success) {
-      yield put(logoutSuccess());
-      toast.success('Logout Successfully !!');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/'; // or use router in component
+    const response: { success: boolean; message: string } = yield call(logoutUser);
+    yield put(logoutSuccess());
+    toast.success('Logout Successfully !!');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/';
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      yield put(logoutFailure(error.message));
+      toast.error(error.message);
     } else {
-      yield put(logoutFailure(response.message || 'Logout failed'));
-      toast.error(response.message || 'Something went wrong !!');
+      yield put(logoutFailure('Logout error'));
+      toast.error('Logout error');
     }
-  } catch (error: any) {
-    yield put(logoutFailure(error.message || 'Logout failed'));
-    toast.error(error.message || 'Logout error');
   }
 }
-
 
 // 🎯 Root Auth Saga
 export default function* authSaga() {

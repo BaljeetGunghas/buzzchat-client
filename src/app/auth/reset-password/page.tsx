@@ -1,12 +1,20 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPassword />
+    </Suspense>
+  );
+}
+
+function ResetPassword() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const token = searchParams.get("token");
@@ -62,10 +70,15 @@ export default function ResetPasswordPage() {
             } else {
                 toast.error(response.data.message || "Reset failed.");
             }
-        } catch (error: any) {
-            toast.error(
-                error.response?.data?.message || "Something went wrong. Try again."
-            );
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                const axiosError = error as { response?: { data?: { message?: string } } };
+                toast.error(
+                    axiosError.response?.data?.message || error.message || "Something went wrong. Try again."
+                );
+            } else {
+                toast.error("Something went wrong. Try again.");
+            }
         } finally {
             setLoading(false);
         }

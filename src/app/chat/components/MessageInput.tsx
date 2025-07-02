@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { FaPaperPlane, FaSmile } from "react-icons/fa";
 import EmojiPicker from "emoji-picker-react";
+import { EmojiClickData } from "emoji-picker-react";
+
 
 interface Props {
   onSendMessage: (message: string) => void;
@@ -19,7 +21,7 @@ export default function MessageInput({ onSendMessage }: Props) {
     setMessage("");
   };
 
-  const handleEmojiClick = (emojiData: any) => {
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
     setMessage((prev) => prev + emojiData.emoji);
     setShowPicker(false);
   };

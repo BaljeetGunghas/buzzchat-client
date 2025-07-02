@@ -29,7 +29,7 @@ export default function RegisterPage() {
   useAuthRedirect();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { user, error, loading, token } = useAppSelector((state) => state.auth);
+  const {  error, loading, token } = useAppSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -42,7 +42,7 @@ export default function RegisterPage() {
 
 
   useEffect(() => {
-    if (user) {
+    if (token) {
       localStorage.setItem('token', token ? token : ''); // store token on successful login
       toast.success("Registration successful!");
       router.push("/profile/edit");
@@ -50,7 +50,7 @@ export default function RegisterPage() {
     if (error) {
       toast.error(error);
     }
-  }, [user, error]);
+  }, [error, router,token]);
 
 
   const onSubmit = (data: RegisterForm) => {

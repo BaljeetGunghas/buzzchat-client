@@ -9,15 +9,17 @@ export const registerUser = async (data: RegisterForm): Promise<RegisterResponse
       { withCredentials: true }
     );
     return response.data;  // <-- only the data, not the full response
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string } }; message: string };
+
     return {
       success: false,
-      message: error.response?.data?.message || error.message,
+      message: err.response?.data?.message || err.message,
       jsonResponse: null,
       output: 0,
       token: '',
     };
-  }
+  };
 };
 
 export const loginUser = async (data: LoginForm): Promise<LoginResponse> => {
@@ -28,15 +30,17 @@ export const loginUser = async (data: LoginForm): Promise<LoginResponse> => {
       { withCredentials: true }
     );
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string } }; message: string };
+
     return {
       success: false,
-      message: error.response?.data?.message || error.message,
+      message: err.response?.data?.message || err.message,
       jsonResponse: null,
       output: 0,
       token: '',
     };
-  }
+  };
 };
 
 
@@ -55,10 +59,12 @@ export const logoutUser = async (): Promise<{
       success: true,
       message: response.data?.message || 'Logout successful',
     };
-  } catch (error: any) {
+   } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string } }; message: string };
+
     return {
       success: false,
-      message: error.response?.data?.message || error.message,
+      message: err.response?.data?.message || err.message,
     };
   }
 };
@@ -86,16 +92,14 @@ export const resetPassword = async (email: string): Promise<ResSetPasswordRespon
       jsonResponse: null,
       output: 1,
     };
-  } catch (error: any) {
-    const message =
-      error.response?.data?.message || 'Failed to request password reset';
-    const status = error.response?.status || 500;
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string } }; message: string };
 
     return {
-      status,
-      message,
+      status: 500,
+      message: err.response?.data?.message || err.message,
       jsonResponse: null,
       output: 0,
     };
-  }
+  };
 };
