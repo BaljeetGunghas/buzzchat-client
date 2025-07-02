@@ -43,6 +43,7 @@ export const useSocketSetup = () => {
 
     // Ensure socket is connected
     if (!socket.connected) {
+      socket.disconnect(); // optional: reset
       socket.connect();
     } else {
       handleConnect(); // manually emit if already connected
@@ -53,5 +54,5 @@ export const useSocketSetup = () => {
       socket.off("receive_message", handleReceiveMessage);
       socket.off("online_users", handleOnlineUsers);
     };
-  }, [USER,USER?._id, dispatch]);
+  }, [USER, USER?._id, dispatch,]);
 };
