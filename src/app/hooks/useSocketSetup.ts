@@ -1,5 +1,5 @@
 // src/hooks/useSocketSetup.ts
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import socket from "@/app/socket";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks";
