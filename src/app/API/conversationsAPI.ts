@@ -18,7 +18,6 @@ export const getUserConversationsChatList = async (
     const res = await axiosInstance.get<GetConversationChatListResponse>(
         `conversations/chat-list/${userId}`
     );
-alert('api called chatlist')
     return res.data;
 };
 
