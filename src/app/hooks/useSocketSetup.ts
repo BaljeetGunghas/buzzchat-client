@@ -26,8 +26,17 @@ export const useSocketSetup = () => {
     };
 
     const handleReceiveMessage = (data: MessagePayload) => {
-      console.log("📩 Message received:", data);
-      toast.info(`New message from ${data.senderName}: ${data.content}`);
+      const beep = new Audio("/sounds/message-rec.mp3");
+      const vibreate = new Audio("/sounds/vibrating.mp3");
+      beep.play().catch((err) => {
+        console.warn("🔇 Beep sound blocked or failed:", err.message);
+      });
+      vibreate.play().catch((err) => {
+        console.warn("🔇 Beep sound blocked or failed:", err.message);
+      });
+
+      toast.info(`New message recived : ${data.content}`);
+
       dispatch(fetchChatsRequest(USER._id));
     };
 

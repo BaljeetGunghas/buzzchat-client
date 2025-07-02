@@ -71,7 +71,7 @@ export default function MessageWindow({ friendId, userId }: Props) {
   }, [friendId, userId]);
 
   // Send a new message
-  const handleSend = async (message:string) => {
+  const handleSend = async (message: string) => {
     if (!message.trim()) return;
 
     try {
@@ -85,7 +85,10 @@ export default function MessageWindow({ friendId, userId }: Props) {
 
       // setConversationId(convoId);
       setMessages((prev) => [...prev, { ...newMsg, fromMe: true }]);
-
+      const vibreate = new Audio("/sounds/message-send.mp3");
+      vibreate.play().catch((err) => {
+        console.warn("🔇 Beep sound blocked or failed:", err.message);
+      });
       socket.emit("send_message", newMsg);
     } catch (err) {
       console.error("Error sending message:", err);
@@ -102,11 +105,10 @@ export default function MessageWindow({ friendId, userId }: Props) {
             className={`flex ${msg.fromMe ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`rounded-lg px-4 py-2 max-w-xs break-words ${
-                msg.fromMe
+              className={`rounded-lg px-4 py-2 max-w-xs break-words ${msg.fromMe
                   ? "bg-yellow-400 text-black rounded-br-none"
                   : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-bl-none"
-              }`}
+                }`}
             >
               {msg.content}
             </div>

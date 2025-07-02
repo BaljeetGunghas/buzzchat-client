@@ -32,8 +32,6 @@ const chatListSlice = createSlice({
       state.error = null;
     },
     fetchChatsSuccess(state, action: PayloadAction<Chat[]>) {
-        console.log(action.payload,'payload');
-        
       state.chats = action.payload;
       state.loading = false;
     },

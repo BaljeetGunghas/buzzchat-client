@@ -4,6 +4,9 @@ import { formatDistanceToNow } from "date-fns";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import Image from "next/image";
+import { useEffect } from "react";
+import { useAppDispatch } from "@/redux/hooks";
+import { fetchChatsRequest } from "@/redux/slices/chatListSlice";
 
 interface Props {
   onSelectFriend: (friendId: string) => void;
@@ -11,11 +14,18 @@ interface Props {
 }
 
 export default function ChatList({ onSelectFriend }: Props) {
+  const dispatch = useAppDispatch();
+
   const { chats } = useSelector(
     (state: RootState) => state.chatList
   );
+  const { user } = useSelector((state: RootState) => state.auth);
 
-
+  useEffect(() => {
+    if (user?._id) {
+      dispatch(fetchChatsRequest(user?._id))
+    }
+  }, [user])
 
   return (
     <div className="overflow-y-auto h-full p-2 space-y-3 bg-gray-50 dark:bg-gray-800">
@@ -42,7 +52,7 @@ export default function ChatList({ onSelectFriend }: Props) {
                         : "/images/default-m.png")
                     }
                     width={40}
-                    height={40}  
+                    height={40}
                     alt={user.name}
                     className="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-gray-600"
                   />
