@@ -1,5 +1,5 @@
 // src/hooks/useSocketSetup.ts
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import socket from "@/app/socket";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks";
@@ -43,6 +43,7 @@ export const useSocketSetup = () => {
 
     // Ensure socket is connected
     if (!socket.connected) {
+      socket.disconnect(); // optional: reset
       socket.connect();
     } else {
       handleConnect(); // manually emit if already connected
@@ -53,5 +54,5 @@ export const useSocketSetup = () => {
       socket.off("receive_message", handleReceiveMessage);
       socket.off("online_users", handleOnlineUsers);
     };
-  }, [USER,USER?._id, dispatch]);
+  }, [USER, USER?._id, dispatch,]);
 };

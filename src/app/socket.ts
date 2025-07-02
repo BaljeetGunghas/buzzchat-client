@@ -1,10 +1,9 @@
-// client/socket.ts
 import { io } from "socket.io-client";
 
-const socket = io(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000", {
-  withCredentials: true,
-  transports: ["websocket", "polling"],
-  autoConnect: false,
+const socket = io("http://localhost:5000", { // or your backend URL
+  autoConnect: false, // manual connect
+  transports: ["websocket"], // optional but more direct
+  withCredentials: true,     // if you're using cookies
 });
 
 export default socket;
