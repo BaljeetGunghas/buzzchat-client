@@ -137,8 +137,16 @@ export default function EditProfilePage() {
       } else {
         toast.error(response.data.message || "Failed to update profile.");
       }
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Something went wrong.");
+
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        toast.error(
+          axiosError.response?.data?.message || error.message || "Something went wrong. Try again."
+        );
+      } else {
+        toast.error("Something went wrong. Try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -150,7 +158,7 @@ export default function EditProfilePage() {
         onSubmit={handleSubmit}
         className="w-full max-w-xl bg-white dark:bg-gray-900 shadow-xl rounded-xl p-8 border border-yellow-300 dark:border-yellow-600 space-y-6"
       >
-        <h2 className="text-3xl font-bold mb-5">{user?.profile_picture && user?.date_of_birth  ?  "Edit Profile" : "Complete Profile"}</h2>
+        <h2 className="text-3xl font-bold mb-5">{user?.profile_picture && user?.date_of_birth ? "Edit Profile" : "Complete Profile"}</h2>
 
         {/* Avatar upload */}
         <div className="flex flex-col items-center relative">

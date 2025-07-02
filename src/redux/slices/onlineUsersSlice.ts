@@ -21,7 +21,7 @@ const onlineUsersSlice = createSlice({
     setOnlineUserProfiles: (state, action: PayloadAction<User[]>) => {
       state.userProfiles = action.payload;
     },
-    fetchOnlineUsersByIds: (state, action: PayloadAction<string[]>) => {
+    fetchOnlineUsersByIds: (_state, _action: PayloadAction<string[]>) => {
       // Empty reducer — used to trigger saga
     },
   },

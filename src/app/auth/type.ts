@@ -33,4 +33,10 @@ export interface RegisterResponse {
   token: string;
 }
 
-export interface LoginResponse extends RegisterResponse {}
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  jsonResponse: User | null;
+  output: number;
+  token: string;
+}

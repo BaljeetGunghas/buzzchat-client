@@ -48,7 +48,8 @@ export default function LoginPage() {
         if (error) {
             toast.error(error);
         }
-    }, [user, error]);
+        
+    }, [user, error,router,setUser,token]);
 
     const onSubmit = (data: LoginForm) => {
         dispatch(loginRequest(data));

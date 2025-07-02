@@ -20,7 +20,7 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         // 🔐 Register
-        registerRequest(state, action: PayloadAction<RegisterForm>) {
+        registerRequest(state, _action: PayloadAction<RegisterForm>) {
             state.loading = true;
             state.error = null;
         },
@@ -35,7 +35,7 @@ const authSlice = createSlice({
         },
 
         // 🔐 Login
-        loginRequest(state, action: PayloadAction<LoginForm>) {
+        loginRequest(state, _action: PayloadAction<LoginForm>) {
             state.loading = true;
             state.error = null;
         },
@@ -49,6 +49,8 @@ const authSlice = createSlice({
             state.error = action.payload;
         },
 
+
+        //Logout
         logoutRequest(state) {
             state.loading = true;
             state.error = null;

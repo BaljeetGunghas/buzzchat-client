@@ -119,7 +119,7 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
                     {["friends", "requests", "groups"].map((tab) => (
                         <button
                             key={tab}
-                            onClick={() => setActiveTab(tab as any)}
+                            onClick={() => setActiveTab(tab as "friends" | "requests" | "groups")}
                             className={clsx(
                                 "flex-1 text-sm font-medium px-3 py-2 rounded-md transition cursor-pointer",
                                 {

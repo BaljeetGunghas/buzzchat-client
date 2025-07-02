@@ -22,7 +22,7 @@ interface UIMessage extends ChatMessage {
 
 export default function MessageWindow({ friendId, userId }: Props) {
   const [messages, setMessages] = useState<UIMessage[]>([]);
-  const [conversationId, setConversationId] = useState<string | null>(null);
+  // const [conversationId, setConversationId] = useState<string | null>(null);
 
   // Load conversation and its messages
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function MessageWindow({ friendId, userId }: Props) {
       );
 
       if (existing) {
-        setConversationId(existing._id);
+        // setConversationId(existing._id);
         const msgs = await fetchMessages(existing._id);
         const formatted = msgs.map((m) => ({
           ...m,
@@ -49,7 +49,7 @@ export default function MessageWindow({ friendId, userId }: Props) {
         }));
         setMessages(formatted);
       } else {
-        setConversationId(null);
+        // setConversationId(null);
         setMessages([]);
       }
     } catch (err) {
@@ -82,9 +82,8 @@ export default function MessageWindow({ friendId, userId }: Props) {
       });
 
       const newMsg = response.jsonResponse.message;
-      const convoId = response.jsonResponse.conversationId;
 
-      setConversationId(convoId);
+      // setConversationId(convoId);
       setMessages((prev) => [...prev, { ...newMsg, fromMe: true }]);
 
       socket.emit("send_message", newMsg);

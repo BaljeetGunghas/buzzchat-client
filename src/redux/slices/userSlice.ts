@@ -1,7 +1,8 @@
+import { User } from '@/app/auth/type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserState {
-  user: any;
+  user: User|null;
   token: string | null;
   loading: boolean;
   error: string | null;
@@ -21,7 +22,7 @@ const userSlice = createSlice({
     registerRequest: (state) => {
       state.loading = true;
     },
-    registerSuccess: (state, action: PayloadAction<{ user: any; token: string }>) => {
+    registerSuccess: (state, action: PayloadAction<{ user: User; token: string }>) => {
       state.loading = false;
       state.user = action.payload.user;
       state.token = action.payload.token;
