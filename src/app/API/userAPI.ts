@@ -17,13 +17,10 @@ export interface FriendProfileApiResponse {
 
 export const getOnlineUserProfiles = async (userIds: string[]): Promise<User[]> => {
   try {
-    console.log(userIds);
-    
     const response = await axiosInstance.post<OnlineUsersApiResponse>(
       "user/status/online",
       { userIds }
     );
-    console.log(response.data);
     
     return response.data.jsonResponse;
   } catch (error) {

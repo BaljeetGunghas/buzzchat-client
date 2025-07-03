@@ -23,16 +23,40 @@ export default function MessageInput({ onSendMessage }: Props) {
 
   const handleEmojiClick = (emojiData: EmojiClickData) => {
     setMessage((prev) => prev + emojiData.emoji);
-    setShowPicker(false);
+    // setShowPicker(false);
   };
 
   return (
-    <div className="relative">
+    <div className="relative" >
+
       {showPicker && (
-        <div className="absolute bottom-16 left-3 z-50">
-          <EmojiPicker onEmojiClick={handleEmojiClick} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-black/20"
+            onClick={() => setShowPicker(false)}
+            aria-hidden="true"
+          />
+
+          {/* Emoji Picker Container */}
+          <div
+            className="
+        absolute
+        bottom-20
+        left-[45%]
+        -translate-x-1/2
+        z-50
+        md:left-1/4
+        w-full
+        max-w-xs
+        sm:translate-x-0
+      "
+          >
+            <EmojiPicker onEmojiClick={handleEmojiClick} />
+          </div>
         </div>
       )}
+
 
       <form
         onSubmit={handleSend}

@@ -48,15 +48,22 @@ export default function LoginPage() {
         if (error) {
             toast.error(error);
         }
-        
-    }, [user, error,router,setUser,token]);
+
+    }, [user, error, router, setUser, token]);
 
     const onSubmit = (data: LoginForm) => {
         dispatch(loginRequest(data));
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-100 via-white to-yellow-50 dark:from-black dark:via-gray-900 dark:to-gray-800 p-4">
+        <div className="min-h-screen flex items-center justify-center  p-4">
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] bg-gradient-to-br from-pink-400 via-yellow-400 to-purple-500 opacity-30 rounded-full filter blur-3xl animate-ai-float1" />
+
+                <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-gradient-to-tr from-sky-400 via-cyan-500 to-teal-400 opacity-10 rounded-full filter blur-2xl animate-ai-float2" />
+
+                <div className="absolute top-[30%] right-[20%] w-[300px] h-[300px] bg-gradient-to-br from-indigo-400 to-purple-600 opacity-15 rounded-full filter blur-2xl animate-ai-float3" />
+            </div>
             <div
                 className="w-full max-w-md bg-white dark:bg-gray-900 p-8 rounded-xl shadow-xl border border-yellow-300 dark:border-yellow-500"
                 data-aos="fade-up"
