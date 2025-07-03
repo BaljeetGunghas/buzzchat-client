@@ -60,7 +60,7 @@ export default function EditProfilePage() {
             : "/images/default-m.png"
       );
     }
-  }, [form.gender, avatarFile]);
+  }, [form.gender, avatarFile,user?.profile_picture]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

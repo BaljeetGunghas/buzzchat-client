@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import Image from "next/image";
-import { FiChevronDown, FiLogOut, FiUser, FiChevronLeft, FiChevronRight, FiChevronUp } from "react-icons/fi";
+import { FiChevronDown, FiLogOut, FiUser, FiChevronUp } from "react-icons/fi";
 import ChatList from "./ChatList";
 import Link from "next/link";
 import SearchPeople from "@/app/components/chat/SearchPeople";

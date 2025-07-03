@@ -26,7 +26,7 @@ export default function ChatList({ onSelectFriend }: Props) {
     if (user?._id) {
       dispatch(fetchChatsRequest(user?._id))
     }
-  }, [user])
+  }, [user,dispatch])
 
 
 
@@ -34,8 +34,9 @@ export default function ChatList({ onSelectFriend }: Props) {
     onSelectFriend(friendId);
     dispatch(markChatAsRead(chatId));
     const userId = user?._id;
-    userId && socket.emit("mark_as_read", { conversationId: chatId, userId });
-
+    if (userId) {
+      socket.emit("mark_as_read", { conversationId: chatId, userId });
+    }
   }
 
   return (
