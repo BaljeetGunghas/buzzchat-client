@@ -47,12 +47,13 @@ const HorizontalUserList: React.FC<HorizontalUserListProps> = ({
       );
 
       setSearchResults(response.data?.jsonResponse || []);
-    } catch (err: any) {
-      if (err.name === "CanceledError" || err.name === "AbortError") {
-        // Request was aborted, no action needed
+   } catch (error: unknown) {
+      if (error instanceof Error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        console.log(axiosError);
+        
       } else {
-        console.error("Search failed:", err);
-        setSearchResults([]);
+        console.log("Something went wrong. Try again.");
       }
     } finally {
       setLoading(false);
