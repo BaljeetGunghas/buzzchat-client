@@ -1,14 +1,23 @@
 "use client";
 
+import { User } from "@/app/auth/type";
 import ConfirmModal from "@/app/components/common/ConfirmModal";
+import UserInfoModal from "@/app/components/common/UserInfoModal";
 import { useState, useRef, useEffect } from "react";
 import { FaVideo, FaPhone, FaEllipsisV } from "react-icons/fa";
 
-export default function ChatActions() {
+
+interface Props {
+  user: User | null;
+}
+
+
+export default function ChatActions({ user, }: Props) {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [showProfileModel, setShowProfileModel] = useState<boolean>(false);
   const [confirmAction, setConfirmAction] = useState<"block" | "report" | "mute" | null>(null);
 
   // Close dropdown if clicked outside
@@ -40,7 +49,7 @@ export default function ChatActions() {
   };
 
   const handleViewProfile = () => {
-    alert("View Profile Clicked");
+    setShowProfileModel(true)
     setShowMenu(false);
   };
 
@@ -102,6 +111,7 @@ export default function ChatActions() {
           )}
         </div>
       </div>
+      <UserInfoModal isOpen={showProfileModel} onClose={() => setShowProfileModel(false)} user={user} />
 
       {/* Confirmation Modal */}
       <ConfirmModal
@@ -112,22 +122,22 @@ export default function ChatActions() {
           confirmAction === "block"
             ? "Block this user?"
             : confirmAction === "report"
-            ? "Report this user?"
-            : "Mute notifications?"
+              ? "Report this user?"
+              : "Mute notifications?"
         }
         description={
           confirmAction === "block"
             ? "You won't be able to send or receive messages from this user."
             : confirmAction === "report"
-            ? "We'll review this user for any violations."
-            : "You will stop receiving notifications from this user."
+              ? "We'll review this user for any violations."
+              : "You will stop receiving notifications from this user."
         }
         confirmText={
           confirmAction === "block"
             ? "Block"
             : confirmAction === "report"
-            ? "Report"
-            : "Mute"
+              ? "Report"
+              : "Mute"
         }
       />
     </>

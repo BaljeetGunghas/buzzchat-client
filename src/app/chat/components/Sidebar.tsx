@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import Image from "next/image";
-import { FiChevronDown, FiLogOut, FiUser, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiChevronDown, FiLogOut, FiUser, FiChevronLeft, FiChevronRight, FiChevronUp } from "react-icons/fi";
 import ChatList from "./ChatList";
 import Link from "next/link";
 import SearchPeople from "@/app/components/chat/SearchPeople";
@@ -70,7 +70,7 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
 
             <aside
                 className={clsx(
-                    "fixed top-0 left-0 h-full bg-white dark:bg-gray-900 border-r dark:border-gray-700 p-4 space-y-6 z-50 w-[80%] md:w-72 transform transition-transform duration-300 ease-in-out",
+                    "fixed top-0 left-0 bg-white dark:bg-gray-900 border-r dark:border-gray-700 p-4 space-y-6 z-50 w-[80%] md:w-72 transform transition-transform duration-300 ease-in-out overflow-y-auto max-h-screen min-h-screen",
                     {
                         "-translate-x-full": !visible,
                         "translate-x-0": visible,
@@ -148,13 +148,7 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
                     <>
                         {!searchMode ? (
                             <div className="flex flex-col items-center justify-center py-10 text-gray-500 dark:text-gray-400">
-                                <p className="mb-4 text-sm">No friend requests.</p>
-                                <button
-                                    onClick={() => setSearchMode(true)}
-                                    className="px-4 py-2 text-sm bg-yellow-400 text-black rounded hover:bg-yellow-500 transition"
-                                >
-                                    Search People
-                                </button>
+                                <p className="mb-4 text-sm">No requests.</p>
                             </div>
                         ) : (
                             <SearchPeople onBack={() => setSearchMode(false)} />
@@ -167,16 +161,54 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
                     <p className="text-sm py-9 text-gray-500 dark:text-gray-400 text-center">No group chats yet.</p>
                 )}
 
-                {/* Toggle for Chat List */}
-                <div className="flex justify-between items-center mt-6 bg-gray-100 p-3 rounded-md">
-                    <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase">
-                        Chats
-                    </h3>
-                    <button onClick={() => setShowChats(!showChats)} className="text-gray-500 dark:text-gray-300 text-sm cursor-pointer">
-                        {showChats ? <FiChevronLeft className="text-xl font-semibold" /> : <FiChevronRight className="text-xl font-semibold" />}
-                    </button>
+
+
+
+                <div className="flex flex-col justify-end flex-grow w-full h-full">
+                    {showChats ? (
+                        <div className="animate-fade-in-up w-full">
+                            {/* Expanded Header */}
+                            <div
+                                onClick={() => setShowChats(false)}
+                                className="w-full cursor-pointer flex items-center justify-between px-4 py-2 rounded-t-lg bg-gray-50 dark:bg-gray-800 border border-b-0 border-gray-200 dark:border-gray-700 shadow-sm"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className="inline-block w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+                                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide select-none">
+                                        Chats
+                                    </h3>
+                                </div>
+                                <FiChevronUp className="text-lg text-gray-600 dark:text-gray-300" />
+                            </div>
+
+                            {/* Chat List Section */}
+                            <div className="w-full bg-white dark:bg-gray-900 border border-t-0 border-gray-200 dark:border-gray-700 rounded-b-lg overflow-hidden">
+                                <div className="p-4">
+                                    {user?._id && (
+                                        <ChatList onSelectFriend={onSelectFriend} userId={user._id} />
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="animate-fade-in-up w-full">
+                            {/* Collapsed Header - Adjusted for mobile */}
+                            <div
+                                onClick={() => setShowChats(true)}
+                                className="w-full cursor-pointer flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-md shadow-sm"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className="inline-block w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+                                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide select-none">
+                                        Chats1
+                                    </h3>
+                                </div>
+                                <FiChevronDown className="text-lg text-gray-600 dark:text-gray-300" />
+                            </div>
+                        </div>
+                    )}
                 </div>
-                {showChats && user?._id && <ChatList onSelectFriend={onSelectFriend} userId={user?._id} />}
+
 
 
 

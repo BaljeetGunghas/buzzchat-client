@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import socket from "../../socket";
 import {
   fetchMessages,
@@ -10,6 +10,8 @@ import { ChatMessage } from "@/app/API/types/message";
 import { Conversation } from "@/app/API/types/conversation";
 import MessageInput from "./MessageInput";
 import { fetchUserConversations } from "@/app/API/conversationsAPI";
+import { fetchChatsRequest } from "@/redux/slices/chatListSlice";
+import { useAppDispatch } from "@/redux/hooks";
 
 interface Props {
   friendId: string;
@@ -21,10 +23,18 @@ interface UIMessage extends ChatMessage {
 }
 
 export default function MessageWindow({ friendId, userId }: Props) {
+  const dispatch = useAppDispatch();
   const [messages, setMessages] = useState<UIMessage[]>([]);
-  // const [conversationId, setConversationId] = useState<string | null>(null);
+  const [conversationId, setConverSationID] = useState<string | null>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  // Load conversation and its messages
+  const scrollToBottom = () => {
+    requestAnimationFrame(() => {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    });
+  };
+
+  // Load messages when chat is opened
   useEffect(() => {
     if (userId && friendId) {
       loadConversation();
@@ -35,21 +45,22 @@ export default function MessageWindow({ friendId, userId }: Props) {
     try {
       const conversations = await fetchUserConversations(userId);
 
-      // Find conversation that includes both users
       const existing = conversations.find((c: Conversation) =>
         c.participants.some((p) => p._id === friendId)
       );
 
       if (existing) {
-        // setConversationId(existing._id);
+        setConverSationID(() => existing?._id)
         const msgs = await fetchMessages(existing._id);
         const formatted = msgs.map((m) => ({
           ...m,
           fromMe: m.senderId === userId,
         }));
         setMessages(formatted);
+
+        // Ensure scroll after rendering
+        setTimeout(scrollToBottom, 150);
       } else {
-        // setConversationId(null);
         setMessages([]);
       }
     } catch (err) {
@@ -59,8 +70,10 @@ export default function MessageWindow({ friendId, userId }: Props) {
 
   useEffect(() => {
     const onReceive = (msg: ChatMessage) => {
+      socket.emit("mark_as_read", { conversationId: conversationId, userId });
       if (msg.senderId === friendId && msg.receiverId === userId) {
         setMessages((prev) => [...prev, { ...msg, fromMe: false }]);
+        setTimeout(scrollToBottom, 100);
       }
     };
 
@@ -70,7 +83,6 @@ export default function MessageWindow({ friendId, userId }: Props) {
     };
   }, [friendId, userId]);
 
-  // Send a new message
   const handleSend = async (message: string) => {
     if (!message.trim()) return;
 
@@ -83,12 +95,15 @@ export default function MessageWindow({ friendId, userId }: Props) {
 
       const newMsg = response.jsonResponse.message;
 
-      // setConversationId(convoId);
       setMessages((prev) => [...prev, { ...newMsg, fromMe: true }]);
+      setTimeout(scrollToBottom, 100);
+      dispatch(fetchChatsRequest(userId));
+
       const vibreate = new Audio("/sounds/message-send.mp3");
       vibreate.play().catch((err) => {
-        console.warn("🔇 Beep sound blocked or failed:", err.message);
+        console.warn("🔇 Sound blocked:", err.message);
       });
+
       socket.emit("send_message", newMsg);
     } catch (err) {
       console.error("Error sending message:", err);
@@ -96,9 +111,12 @@ export default function MessageWindow({ friendId, userId }: Props) {
   };
 
   return (
-    <div className="flex flex-col flex-1">
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-900 space-y-3">
+    <div className="flex flex-col flex-1 h-full">
+      {/* Message area */}
+      <div
+        className="flex-1 p-4 bg-white dark:bg-gray-900 space-y-3 overflow-y-auto overflow-x-hidden"
+        style={{ maxHeight: "83vh", minHeight: "83vh" }}
+      >
         {messages.map((msg) => (
           <div
             key={msg._id}
@@ -106,17 +124,19 @@ export default function MessageWindow({ friendId, userId }: Props) {
           >
             <div
               className={`rounded-lg px-4 py-2 max-w-xs break-words ${msg.fromMe
-                  ? "bg-yellow-400 text-black rounded-br-none"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-bl-none"
+                ? "bg-yellow-400 text-black rounded-br-none"
+                : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-bl-none"
                 }`}
             >
               {msg.content}
             </div>
           </div>
         ))}
+        {/* 👇 PLACE THE REF **inside** the scrollable container */}
+        <div ref={bottomRef} />
       </div>
 
-      {/* Input Area */}
+      {/* Input */}
       <MessageInput onSendMessage={handleSend} />
     </div>
   );

@@ -1,18 +1,10 @@
+import { ChatListJsonResponse } from "@/app/API/types/conversation";
 import { User } from "@/app/auth/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
-interface Chat {
-  _id: string;
-  participants: User;
-  lastMessage: string | null;
-  lastMessageTime: string;
-  isRead: boolean;
-  sentByMe?: boolean;
-}
-
 interface ChatListState {
-  chats: Chat[];
+  chats: ChatListJsonResponse[];
   loading: boolean;
   error: string | null;
 }
@@ -31,7 +23,7 @@ const chatListSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    fetchChatsSuccess(state, action: PayloadAction<Chat[]>) {
+    fetchChatsSuccess(state, action: PayloadAction<ChatListJsonResponse[]>) {
       state.chats = action.payload;
       state.loading = false;
     },
@@ -39,6 +31,16 @@ const chatListSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+
+    //mark message as read 
+    markChatAsRead(state, action: PayloadAction<string>) {
+      const id = action.payload;
+      const chat = state.chats.find(c => c._id === id);
+      if (chat) {
+        chat.isRead = true;
+        chat.unreadCount = 0;
+      }
+    }
   },
 });
 
@@ -46,6 +48,7 @@ export const {
   fetchChatsRequest,
   fetchChatsSuccess,
   fetchChatsFailure,
+  markChatAsRead
 } = chatListSlice.actions;
 
 export default chatListSlice.reducer;

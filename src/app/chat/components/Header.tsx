@@ -5,6 +5,7 @@ import ChatActions from "./HeaderOptions";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getFrindProfile } from "@/app/API/userAPI";
+import UserInfoModal from "@/app/components/common/UserInfoModal";
 
 
 interface Props {
@@ -14,6 +15,8 @@ interface Props {
 export default function Header({ friendId }: Props) {
   const [friend, setFriend] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
 
   useEffect(() => {
     if (!friendId) {
@@ -24,7 +27,7 @@ export default function Header({ friendId }: Props) {
     const fetchFriendProfile = async () => {
       try {
         setLoading(true);
-        const response  = await getFrindProfile(friendId)
+        const response = await getFrindProfile(friendId)
         setFriend(response.jsonResponse);
       } catch (error) {
         console.error("Failed to fetch friend profile", error);
@@ -56,15 +59,15 @@ export default function Header({ friendId }: Props) {
   const avatar = friend.profile_picture
     ? friend.profile_picture
     : friend.gender === "F"
-    ? "/images/default-f.png"
-    : "/images/default-m.png";
+      ? "/images/default-f.png"
+      : "/images/default-m.png";
 
   const isOnline = friend.status === "online";
 
   return (
     <header className="flex items-center justify-between px-4 pb-2 pt-7 border-b dark:border-gray-700 bg-white dark:bg-gray-900">
       {/* User Info */}
-      <div className="flex items-center gap-3 pl-10 md:pl-0">
+      <div onClick={() => setModalOpen(true)} className="cursor-pointer flex items-center gap-3 pl-10 md:pl-0">
         <div className="relative w-10 h-10 rounded-full  border-2 border-yellow-400">
           <Image src={avatar} alt={friend.name} className="rounded-full" fill style={{ objectFit: "cover" }} />
           {isOnline && (
@@ -73,14 +76,22 @@ export default function Header({ friendId }: Props) {
         </div>
         <div>
           <p className="text-sm font-semibold text-gray-900 dark:text-white">{friend.name}</p>
-          <p className={`text-xs  ${isOnline ? "text-green-600 dark:text-green-400" : "text-gray-500 dark:text-gray-400"}`}>
-            {isOnline ? "Online" : "Offline"}
+          <p
+            className={`text-xs ${isOnline ? "text-green-600 dark:text-green-400" : "text-gray-500 dark:text-gray-400"
+              }`}
+          >
+            {isOnline
+              ? "Online"
+              : friend.lastLogin
+                ? `Last seen: ${new Date(friend.lastLogin).toLocaleString()}`
+                : "Offline"}
           </p>
         </div>
       </div>
-
       {/* Actions */}
-      <ChatActions />
+      <ChatActions user={friend} />
+      <UserInfoModal isOpen={modalOpen} onClose={() => setModalOpen(false)} user={friend} />
+
     </header>
   );
 }

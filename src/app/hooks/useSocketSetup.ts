@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { fetchChatsRequest } from "@/redux/slices/chatListSlice";
+import { fetchChatsRequest, markChatAsRead } from "@/redux/slices/chatListSlice";
 import { fetchOnlineUsersByIds } from "@/redux/slices/onlineUsersSlice";
 
 interface MessagePayload {
@@ -41,14 +41,25 @@ export const useSocketSetup = () => {
     };
 
     const handleOnlineUsers = (onlineUserIds: string[]) => {
-      console.log("🟢 Online users:", onlineUserIds);
       dispatch(fetchOnlineUsersByIds(onlineUserIds));
     };
+
+    const handleMessagesRead = ({ conversationId}: { conversationId: string; }) => {
+      dispatch(markChatAsRead(conversationId));
+    };
+
+
+
+
+
 
     // Listen for events
     socket.on("connect", handleConnect);
     socket.on("receive_message", handleReceiveMessage);
     socket.on("online_users", handleOnlineUsers);
+    socket.on("messages_read", handleMessagesRead);
+
+
 
     // Ensure socket is connected
     if (!socket.connected) {
@@ -62,6 +73,7 @@ export const useSocketSetup = () => {
       socket.off("connect", handleConnect);
       socket.off("receive_message", handleReceiveMessage);
       socket.off("online_users", handleOnlineUsers);
+      socket.off("messages_read", handleMessagesRead);
     };
   }, [USER, USER?._id, dispatch,]);
 };

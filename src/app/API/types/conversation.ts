@@ -20,7 +20,8 @@ export interface ChatListJsonResponse {
   lastMessage: string | null;
   lastMessageTime: string;
   isRead: boolean;
-  sentByMe: boolean;
+  unreadCount: number;
+  sentByMe?: boolean;
 }
 
 export interface GetConversationChatListResponse {

@@ -6,7 +6,8 @@ import { useSelector } from "react-redux";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/redux/hooks";
-import { fetchChatsRequest } from "@/redux/slices/chatListSlice";
+import { fetchChatsRequest, markChatAsRead } from "@/redux/slices/chatListSlice";
+import socket from "@/app/socket";
 
 interface Props {
   onSelectFriend: (friendId: string) => void;
@@ -27,6 +28,16 @@ export default function ChatList({ onSelectFriend }: Props) {
     }
   }, [user])
 
+
+
+  const handleChatListOpen = (chatId: string, friendId: string) => {
+    onSelectFriend(friendId);
+    dispatch(markChatAsRead(chatId));
+    const userId = user?._id;
+    userId && socket.emit("mark_as_read", { conversationId: chatId, userId });
+
+  }
+
   return (
     <div className="overflow-y-auto h-full p-2 space-y-3 bg-gray-50 dark:bg-gray-800">
       <ul className="flex flex-col space-y-2">
@@ -37,7 +48,7 @@ export default function ChatList({ onSelectFriend }: Props) {
           return (
             <li
               key={chat._id}
-              onClick={() => onSelectFriend(user._id)}
+              onClick={() => handleChatListOpen(chat._id, chat.participants._id)}
               className="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-600 transition"
             >
               {/* Left: Profile + Name + Last Message */}
@@ -90,9 +101,9 @@ export default function ChatList({ onSelectFriend }: Props) {
                     })}
                   </span>
                 )}
-                {!chat.isRead && !chat.sentByMe && (
-                  <span className="text-xs bg-yellow-400 text-black px-2 rounded-full font-semibold">
-                    1
+                {chat.unreadCount > 0 && (
+                  <span className="bg-yellow-400 text-black text-xs px-2 py-0.5 rounded-full">
+                    {chat.unreadCount}
                   </span>
                 )}
               </div>
