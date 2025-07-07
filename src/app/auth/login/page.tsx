@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useAuthRedirect } from "@/app/hooks/seAuthRedirect";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { loginRequest } from "@/redux/slices/authSlice";
+import GoogleLoginButton from "@/app/components/GoogleLoginButton";
 
 type LoginForm = {
     email: string;
@@ -128,13 +129,9 @@ export default function LoginPage() {
                 </div>
 
                 {/* Google Button */}
-                <button
-                    onClick={() => alert("Google login not implemented yet")}
-                    className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 text-sm text-gray-800 dark:text-gray-200 rounded-md py-2 transition"
-                >
-                    <FaGoogle className="text-red-500" />
-                    Continue with Google
-                </button>
+                <div className="my-4">
+                    <GoogleLoginButton />
+                </div>
 
                 {/* Navigation Links */}
                 <div className="text-center text-sm mt-4 text-gray-600 dark:text-gray-400">

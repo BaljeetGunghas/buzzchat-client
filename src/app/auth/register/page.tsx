@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { registerRequest } from "@/redux/slices/authSlice";
 import { RegisterForm } from "../type";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import GoogleLoginButton from "@/app/components/GoogleLoginButton";
 
 
 
@@ -29,7 +30,7 @@ export default function RegisterPage() {
   useAuthRedirect();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const {  error, loading, token } = useAppSelector((state) => state.auth);
+  const { error, loading, token } = useAppSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -50,7 +51,7 @@ export default function RegisterPage() {
     if (error) {
       toast.error(error);
     }
-  }, [error, router,token]);
+  }, [error, router, token]);
 
 
   const onSubmit = (data: RegisterForm) => {
@@ -156,13 +157,9 @@ export default function RegisterPage() {
         </div>
 
         {/* Google Sign-In */}
-        <button
-          onClick={() => alert("Google Login Not Implemented")}
-          className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 text-sm text-gray-800 dark:text-gray-200 rounded-md py-2 transition"
-        >
-          <FaGoogle className="text-red-500" />
-          Continue with Google
-        </button>
+        <div className="my-4">
+          <GoogleLoginButton />
+        </div>
 
         {/* Navigation */}
         <div className="text-center text-sm mt-6 text-gray-600 dark:text-gray-400">

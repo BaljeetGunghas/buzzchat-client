@@ -6,6 +6,8 @@ import { useInitializeUser } from "../hooks/useInitializeUser";
 import { useAuthRedirect } from "../hooks/seAuthRedirect";
 import { User } from "@/app/auth/type";
 import { useSocketSetup } from "../hooks/useSocketSetup";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 
 // ✅ Auth context type
 interface AuthContextType {
@@ -23,9 +25,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useSocketSetup();
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
-      {children}
-    </AuthContext.Provider>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
+      <AuthContext.Provider value={{ user, setUser }}>
+        {children}
+      </AuthContext.Provider>
+    </GoogleOAuthProvider>
   );
 };
 
