@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaGoogle, FaPhone } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaPhone } from "react-icons/fa";
 import Link from "next/link";
 import { useAuthRedirect } from "@/app/hooks/seAuthRedirect";
 import { toast } from "sonner";
