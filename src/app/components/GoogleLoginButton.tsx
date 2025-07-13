@@ -2,7 +2,6 @@
 "use client";
 
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks";

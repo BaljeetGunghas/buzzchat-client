@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/redux/hooks";
 import { fetchChatsRequest, markChatAsRead } from "@/redux/slices/chatListSlice";
-import socket from "@/app/socket";
+import socket from "@/app/socket-client";
 
 interface Props {
   onSelectFriend: (friendId: string) => void;

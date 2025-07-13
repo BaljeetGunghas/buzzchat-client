@@ -4,8 +4,8 @@ import { User } from "@/app/auth/type";
 import ChatActions from "./HeaderOptions";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { getFrindProfile } from "@/app/API/userAPI";
 import UserInfoModal from "@/app/components/common/UserInfoModal";
+import { getFrindProfile } from "@/app/api/userAPI";
 
 
 interface Props {

@@ -5,9 +5,9 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import Link from "next/link";
 import { FaEnvelope } from "react-icons/fa";
-import { resetPassword } from "@/app/API/authAPI";
 import { toast } from "sonner";
 import { ImSpinner2 } from "react-icons/im";
+import { resetPassword } from "@/app/api/authAPI";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

@@ -7,7 +7,7 @@ export const fetchMessages = async (
   conversationId: string
 ): Promise<ChatMessage[]> => {
   const res = await axiosInstance.get<GetMessagesResponse>(
-    `message/${conversationId}`
+    `messages/${conversationId}`
   );
   return res.data.jsonResponse;
 };
@@ -16,6 +16,6 @@ export const sendMessage = async (payload: {
   receiverId: string;
   content: string;
 }): Promise<SendMessageResponse> => {
-  const res = await axiosInstance.post("message/send", payload);
+  const res = await axiosInstance.post("messages/send", payload);
   return res.data;
 };
