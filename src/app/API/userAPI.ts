@@ -18,7 +18,7 @@ export interface FriendProfileApiResponse {
 export const getOnlineUserProfiles = async (userIds: string[]): Promise<User[]> => {
   try {
     const response = await axiosInstance.post<OnlineUsersApiResponse>(
-      "user/status/online",
+      "users/status/online",
       { userIds }
     );
     
@@ -32,7 +32,7 @@ export const getOnlineUserProfiles = async (userIds: string[]): Promise<User[]> 
 
 export const getFrindProfile = async (friendID : string): Promise<FriendProfileApiResponse> => {
     try {
-        const response = await axiosInstance.get<FriendProfileApiResponse>(`user/${friendID}`);
+        const response = await axiosInstance.get<FriendProfileApiResponse>(`users/${friendID}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching online users", error);

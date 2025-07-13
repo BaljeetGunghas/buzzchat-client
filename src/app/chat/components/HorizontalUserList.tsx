@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { FiSearch } from "react-icons/fi";
 import { User } from "@/app/auth/type";
 import axiosInstance from "@/app/utils/axiosInstance";
-import { SearchUserResponse } from "@/app/API/types/user";
+import { SearchUserResponse } from "@/app/api/types/user";
 
 interface HorizontalUserListProps {
   users: User[]; // Online users passed from parent
@@ -42,7 +42,7 @@ const HorizontalUserList: React.FC<HorizontalUserListProps> = ({
     try {
       setLoading(true);
       const response = await axiosInstance.get<SearchUserResponse>(
-        `/user/searchbyname?query=${encodeURIComponent(term)}`,
+        `/users/searchbyname?query=${encodeURIComponent(term)}`,
         { signal: controller.signal }
       );
 

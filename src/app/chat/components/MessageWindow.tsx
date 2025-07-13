@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import socket from "../../socket";
 import {
   fetchMessages,
   sendMessage as sendMsgAPI,
-} from "@/app/API/chatAPI";
-import { ChatMessage } from "@/app/API/types/message";
-import { Conversation } from "@/app/API/types/conversation";
+} from "@/app/api/chatAPI";
+import { ChatMessage } from "@/app/api/types/message";
+import { Conversation } from "@/app/api/types/conversation";
 import MessageInput from "./MessageInput";
-import { fetchUserConversations } from "@/app/API/conversationsAPI";
+import { fetchUserConversations } from "@/app/api/conversationsAPI";
 import { fetchChatsRequest } from "@/redux/slices/chatListSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import socket from "@/app/socket-client";
 
 interface Props {
   friendId: string;
@@ -33,14 +33,6 @@ export default function MessageWindow({ friendId, userId }: Props) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     });
   };
-
-  // Load messages when chat is opened
-  useEffect(() => {
-    if (userId && friendId) {
-      loadConversation();
-    }
-  }, [friendId, userId]);
-
   const loadConversation = async () => {
     try {
       const conversations = await fetchUserConversations(userId);
@@ -67,6 +59,14 @@ export default function MessageWindow({ friendId, userId }: Props) {
       console.error("Error loading conversation:", err);
     }
   };
+  // Load messages when chat is opened
+  useEffect(() => {
+    if (userId && friendId) {
+      loadConversation();
+    }
+  }, [friendId, userId]);
+
+
 
   useEffect(() => {
     const onReceive = (msg: ChatMessage) => {

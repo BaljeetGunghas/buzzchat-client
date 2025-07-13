@@ -200,7 +200,7 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
                                 <div className="flex items-center gap-2">
                                     <span className="inline-block w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
                                     <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide select-none">
-                                        Chats1
+                                        Chats
                                     </h3>
                                 </div>
                                 <FiChevronDown className="text-lg text-gray-600 dark:text-gray-300" />

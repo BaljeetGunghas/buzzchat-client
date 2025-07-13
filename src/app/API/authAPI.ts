@@ -1,17 +1,32 @@
+// src/services/auth.ts
 import axios from 'axios';
-import { LoginForm, LoginResponse, RegisterForm, RegisterResponse } from '../auth/type';
+import {
+  LoginForm,
+  LoginResponse,
+  RegisterForm,
+  RegisterResponse,
+} from '../auth/type';
 
-export const registerUser = async (data: RegisterForm): Promise<RegisterResponse> => {
+const BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? '').replace(/\/$/, '');
+const AUTH_API = `${BASE_URL}/auth`;
+
+export const registerUser = async (
+  data: RegisterForm
+): Promise<RegisterResponse> => {
   try {
-    const response = await axios.post<RegisterResponse>(
-      `${process.env.NEXT_PUBLIC_API_URL}auth/register`,
+    console.log('AUTH_API', AUTH_API);
+
+    const { data: payload } = await axios.post<RegisterResponse>(
+      `${AUTH_API}/register`,
       data,
       { withCredentials: true }
     );
-    return response.data;  // <-- only the data, not the full response
+    return payload;
   } catch (error: unknown) {
-    const err = error as { response?: { data?: { message?: string } }; message: string };
-
+    const err = error as {
+      response?: { data?: { message?: string } };
+      message: string;
+    };
     return {
       success: false,
       message: err.response?.data?.message || err.message,
@@ -19,20 +34,24 @@ export const registerUser = async (data: RegisterForm): Promise<RegisterResponse
       output: 0,
       token: '',
     };
-  };
+  }
 };
 
-export const loginUser = async (data: LoginForm): Promise<LoginResponse> => {
+export const loginUser = async (
+  data: LoginForm
+): Promise<LoginResponse> => {
   try {
-    const response = await axios.post<LoginResponse>(
-      `${process.env.NEXT_PUBLIC_API_URL}auth/login`,
+    const { data: payload } = await axios.post<LoginResponse>(
+      `${AUTH_API}/login`,
       data,
       { withCredentials: true }
     );
-    return response.data;
+    return payload;
   } catch (error: unknown) {
-    const err = error as { response?: { data?: { message?: string } }; message: string };
-
+    const err = error as {
+      response?: { data?: { message?: string } };
+      message: string;
+    };
     return {
       success: false,
       message: err.response?.data?.message || err.message,
@@ -40,28 +59,28 @@ export const loginUser = async (data: LoginForm): Promise<LoginResponse> => {
       output: 0,
       token: '',
     };
-  };
+  }
 };
-
 
 export const logoutUser = async (): Promise<{
   success: boolean;
   message: string;
 }> => {
   try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}auth/logoutUser`,
+    const { data } = await axios.post(
+      `${AUTH_API}/logoutUser`,
       {},
       { withCredentials: true }
     );
-
     return {
       success: true,
-      message: response.data?.message || 'Logout successful',
+      message: data?.message || 'Logout successful',
     };
-   } catch (error: unknown) {
-    const err = error as { response?: { data?: { message?: string } }; message: string };
-
+  } catch (error: unknown) {
+    const err = error as {
+      response?: { data?: { message?: string } };
+      message: string;
+    };
     return {
       success: false,
       message: err.response?.data?.message || err.message,
@@ -69,16 +88,14 @@ export const logoutUser = async (): Promise<{
   }
 };
 
-
-interface ResSetPasswordResponse {
-  status: number,
-  message: string,
-  jsonResponse: null,
-  output: number
+export interface ResetPasswordResponse {
+  status: number;
+  message: string;
+  jsonResponse: null;
+  output: number;
 }
 
-
-export const resetPassword = async (email: string): Promise<ResSetPasswordResponse> => {
+export const resetPassword = async (email: string): Promise<ResetPasswordResponse> => {
   try {
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}auth/forgot-password`,
