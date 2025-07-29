@@ -21,7 +21,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex flex-col md:flex-row bg-gray-100 dark:bg-gray-900 max-h-screen">
       {/* Mobile Hamburger Button */}
       <button
         onClick={toggleSidebar}
@@ -39,7 +39,7 @@ export default function ChatPage() {
       />
 
       {/* Main Chat Area */}
-      <div className="flex flex-col flex-1 md:ml-full">
+      <div className="flex flex-col flex-1 md:ml-full ">
         {activeChatFriendId && <Header friendId={activeChatFriendId} />}
         {activeChatFriendId && user?._id ? (
           <MessageWindow key={activeChatFriendId} friendId={activeChatFriendId} userId={user?._id} />

@@ -40,8 +40,8 @@ export default function ChatList({ onSelectFriend }: Props) {
   }
 
   return (
-    <div className="overflow-y-auto h-full p-2 space-y-3 bg-gray-50 dark:bg-gray-800">
-      <ul className="flex flex-col space-y-2">
+    <div className=" p-2 space-y-3 bg-gray-50 dark:bg-gray-800">
+      <ul className="flex flex-col space-y-2 overflow-y-auto h-1/5">
         {chats?.map((chat) => {
           const user = chat.participants;
           if (!user) return null;

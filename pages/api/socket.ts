@@ -3,8 +3,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { Server as IOServer } from 'socket.io'
 import { Server as NetServer } from 'http'
 import { Socket as NetSocket } from 'net'
-import { connectDB } from '@/lib/mongoose'
 import { setupSocket } from '@/sockets/socket'
+import { connectDB } from '@/lib/mongoose'
 
 export const config = { api: { bodyParser: false } }
 
@@ -19,6 +19,7 @@ export default async function handler(
   await connectDB()
 
   const sock = res.socket
+  
   if (!sock.server.io) {
     console.log('🕸️  Initializing Socket.IO')
     const io = new IOServer(sock.server, {

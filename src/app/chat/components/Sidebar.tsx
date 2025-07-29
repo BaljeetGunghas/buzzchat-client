@@ -164,16 +164,16 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
 
 
 
-                <div className="flex flex-col justify-end flex-grow w-full h-full">
+                <div className="flex flex-col flex-grow w-full h-[26rem] md:h-[26rem] md:max-h-[80vh]">
                     {showChats ? (
-                        <div className="animate-fade-in-up w-full">
+                        <div className="flex flex-col animate-fade-in-up w-full h-full">
                             {/* Expanded Header */}
                             <div
                                 onClick={() => setShowChats(false)}
-                                className="w-full cursor-pointer flex items-center justify-between px-4 py-2 rounded-t-lg bg-gray-50 dark:bg-gray-800 border border-b-0 border-gray-200 dark:border-gray-700 shadow-sm"
+                                className="flex items-center justify-between px-4 py-2 rounded-t-lg bg-gray-50 dark:bg-gray-800 border border-b-0 border-gray-200 dark:border-gray-700 shadow-sm cursor-pointer"
                             >
                                 <div className="flex items-center gap-2">
-                                    <span className="inline-block w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+                                    <span className="inline-block w-3 h-3 rounded-full bg-yellow-400 animate-pulse" />
                                     <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide select-none">
                                         Chats
                                     </h3>
@@ -182,8 +182,8 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
                             </div>
 
                             {/* Chat List Section */}
-                            <div className="w-full bg-white dark:bg-gray-900 border border-t-0 border-gray-200 dark:border-gray-700 rounded-b-lg overflow-hidden">
-                                <div className="p-4">
+                            <div className="flex-1 overflow-y-auto dark:bg-gray-900 border border-t-0 border-gray-200 dark:border-gray-700 rounded-b-lg">
+                                <div className="">
                                     {user?._id && (
                                         <ChatList onSelectFriend={onSelectFriend} userId={user._id} />
                                     )}
@@ -191,7 +191,7 @@ export default function Sidebar({ visible, onClose, onSelectFriend }: SidebarPro
                             </div>
                         </div>
                     ) : (
-                        <div className="animate-fade-in-up w-full">
+                        <div className="animate-fade-in-up w-full absolute bottom-10 px-4 left-0">
                             {/* Collapsed Header - Adjusted for mobile */}
                             <div
                                 onClick={() => setShowChats(true)}

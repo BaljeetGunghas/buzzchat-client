@@ -3,15 +3,14 @@
 
 import { io, Socket } from 'socket.io-client'
 
-// 1) Hit your pages/api/socket.ts endpoint so the server actually
-//    spins up the Socket.IO listener.
+// 1) Wake up the server so it mounts your Socket.IO listener
 fetch('/api/socket').catch(console.error)
 
-// 2) Then create your client socket, pointing at the absolute API route:
+// 2) Then connect (browser only)
 const socket: Socket = io({
-  path: '/api/socket',         // <-- absolute path, not "../api/socket"
-  transports: ['websocket'],   // optional but recommended
-  withCredentials: true,       // send cookies if you’re using them
+  path: '/api/socket',       // absolute URL path to the Pages API
+  transports: ['websocket'], // skip polling
+  withCredentials: true,     // if you’re using cookies for auth
 })
 
 export default socket
