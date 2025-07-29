@@ -3,8 +3,8 @@ import {
   fetchChatsRequest,
   fetchChatsSuccess,
 } from "../slices/chatListSlice";
-import { getUserConversationsChatList } from "@/app/API/conversationsAPI";
-import { GetConversationChatListResponse } from "@/app/API/types/conversation";
+import { GetConversationChatListResponse } from "@/app/api/types/conversation";
+import { getUserConversationsChatList } from "@/app/api/conversationsAPI";
 
 function* fetchChatsSaga(action: ReturnType<typeof fetchChatsRequest>) {
   try {

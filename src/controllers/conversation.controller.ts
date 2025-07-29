@@ -3,9 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongoose'
 import { Conversation, IConversation } from '@/models/Conversation'
 import { Message, IMessage } from '@/models/Message'
-import { resFormat } from '@/utils/resFormat'
+import {  AppError, resFormat } from '@/utils/resFormat'
 import { Types } from 'mongoose'
-import { AppError } from './user.controller'
 
 /**
  * POST /api/conversations
@@ -60,44 +59,54 @@ export async function getOrCreateConversation(
  * GET /api/conversations/:userId
  * Return all conversations for a user (excluding that user from participants).
  */
+
+
 export async function getUserConversations(
     userId: string
 ): Promise<NextResponse> {
     try {
         await connectDB()
 
-        // 1) Fetch & populate
+        // 1) Fetch & populate conversations with participants data, excluding sensitive fields
         const conversations = await Conversation.find({
             participants: userId,
         }).populate(
             'participants',
             '-password -resetPasswordToken -resetPasswordExpires -verificationToken -verificationTokenExpires'
-        ) as (IConversation & { participants: any[] })[]
+        ) as unknown as (IConversation & { participants: string[] })[] // Ensure proper typing for participants
 
         // 2) Strip out the requesting user
-        const formatted = conversations.map(conv => {
-            const others = conv.participants.filter(
+        const formattedConversations = conversations.map(conv => {
+            const otherParticipants = conv.participants.filter(
                 p => p._id.toString() !== userId
             )
             return {
                 _id: conv._id,
-                participants: others,
+                participants: otherParticipants,
                 createdAt: conv.createdAt,
                 updatedAt: conv.updatedAt,
             }
         })
 
         return NextResponse.json(
-            resFormat(200, 'Conversations fetched successfully', formatted, 1),
+            resFormat(200, 'Conversations fetched successfully', formattedConversations, 1),
             { status: 200 }
         )
     } catch (err: unknown) {
-        const error = err as AppError
-        console.error(error.message)
-        return NextResponse.json(
-            resFormat(500, 'Server error', null, 0),
-            { status: 500 }
-        )
+        // Improved error handling
+        if (err instanceof AppError) {
+            console.error(`AppError: ${err.message}`)
+            return NextResponse.json(
+                resFormat(500, 'Application error occurred', null, 0),
+                { status: 500 }
+            )
+        } else {
+            console.error('Unexpected error:', err)
+            return NextResponse.json(
+                resFormat(500, 'Server error occurred', null, 0),
+                { status: 500 }
+            )
+        }
     }
 }
 
@@ -119,7 +128,7 @@ export async function getUserChatList(
                 'participants',
                 '-password -resetPasswordToken -resetPasswordExpires -verificationToken -verificationTokenExpires'
             )
-            .lean() as (IConversation & { participants: any[] })[]
+            .lean() as (IConversation & { participants: unknown[] })[]
 
         // 2) Map each to your chat‐list shape
         const list = await Promise.all(convos.map(async conv => {

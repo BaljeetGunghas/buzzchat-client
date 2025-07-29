@@ -8,12 +8,6 @@ import { useAppDispatch } from "@/redux/hooks";
 import { loginSuccess } from "@/redux/slices/authSlice";
 import axios from "axios";
 
-interface GoogleJwtPayload {
-  email: string;
-  name: string;
-  picture: string;
-  sub: string;
-}
 
 export default function GoogleLoginButton() {
   const router = useRouter();

@@ -1,8 +1,8 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import { fetchOnlineUsersByIds, setOnlineUserProfiles, setOnlineUserIds } from "../slices/onlineUsersSlice";
-import { getOnlineUserProfiles } from "@/app/API/userAPI";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { User } from "@/app/auth/type";
+import { getOnlineUserProfiles } from "@/app/api/userAPI";
 
 function* fetchOnlineUsersByIdsSaga(action: PayloadAction<string[]>) {
   try {

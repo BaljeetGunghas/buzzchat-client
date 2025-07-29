@@ -61,7 +61,7 @@ export default function MessageWindow({ friendId, userId }: Props) {
     if (userId && friendId) {
       loadConversation();
     }
-  }, [friendId, userId]);
+  }, [friendId, userId, loadConversation]);
 
 
 
@@ -78,7 +78,7 @@ export default function MessageWindow({ friendId, userId }: Props) {
     return () => {
       socket.off("receive_message", onReceive);
     };
-  }, [friendId, userId]);
+  }, [conversationId,friendId, userId]);
 
   const handleSend = async (message: string) => {
     if (!message.trim()) return;
@@ -112,7 +112,7 @@ export default function MessageWindow({ friendId, userId }: Props) {
       {/* Message area */}
       <div
         className="flex-1 p-4 bg-white dark:bg-gray-900 space-y-3 overflow-y-auto overflow-x-hidden"
-        // style={{ maxHeight: "83vh", minHeight: "83vh" }}
+      // style={{ maxHeight: "83vh", minHeight: "83vh" }}
       >
         {messages.map((msg) => (
           <div

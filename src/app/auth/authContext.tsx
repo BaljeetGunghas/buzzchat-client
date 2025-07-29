@@ -1,7 +1,7 @@
 // auth/useAuth.tsx
 "use client";
 
-import { createContext, useContext, useState, Dispatch, SetStateAction, ReactNode, useEffect } from "react";
+import { createContext, useContext, useState, Dispatch, SetStateAction, ReactNode } from "react";
 import { useInitializeUser } from "../hooks/useInitializeUser";
 import { useAuthRedirect } from "../hooks/seAuthRedirect";
 import { User } from "@/app/auth/type";
