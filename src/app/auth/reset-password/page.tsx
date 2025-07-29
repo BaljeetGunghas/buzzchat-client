@@ -17,8 +17,8 @@ export default function ResetPasswordPage() {
 function ResetPassword() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const token = searchParams.get("token");
-    const email = searchParams.get("email");
+    const token = searchParams?.get("token") || '';
+    const email = searchParams?.get("email") || '';
 
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");

@@ -1,5 +1,4 @@
-import { ChatListJsonResponse } from "@/app/API/types/conversation";
-import { User } from "@/app/auth/type";
+import { ChatListJsonResponse } from "@/app/api/types/conversation";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 

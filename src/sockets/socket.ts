@@ -1,6 +1,5 @@
 ///sockets/socket.ts
 import { Server as SocketIOServer, Socket } from 'socket.io'
-import { Types } from 'mongoose'
 import { User } from '@/models/User'
 import { Message } from '@/models/Message'
 

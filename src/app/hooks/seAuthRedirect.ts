@@ -17,7 +17,7 @@ export function useAuthRedirect() {
       "/auth/reset-password",
     ];
 
-    const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
+    const isPublicPath = publicPaths.some((path) => pathname?.startsWith(path)) || [];
 
     if (token) {
       // User is authenticated

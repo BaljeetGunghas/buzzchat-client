@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongoose'
 import { Conversation } from '@/models/Conversation'
 import { Message } from '@/models/Message'
-import { resFormat } from '@/utils/resFormat'
+import { AppError, resFormat } from '@/utils/resFormat'
 // import { io } from '@/sockets/socket' // adjust to wherever you export your io instance
 import { Types } from 'mongoose'
 
@@ -74,8 +74,9 @@ export async function sendMessage(
             ),
             { status: 201 }
         )
-    } catch (err: any) {
-        console.error('sendMessage error:', err)
+    } catch (err: unknown) {
+        const error = err as AppError
+        console.error(error.message)
         return NextResponse.json(
             resFormat(500, 'Server error', null, 0),
             { status: 500 }
@@ -107,8 +108,9 @@ export async function getMessagesByConversationId(
             resFormat(200, 'Messages fetched successfully', messages, 1),
             { status: 200 }
         )
-    } catch (err: any) {
-        console.error('getMessagesByConversationId error:', err)
+    } catch (err: unknown) {
+        const error = err as AppError
+        console.error(error.message)
         return NextResponse.json(
             resFormat(500, 'Server error', null, 0),
             { status: 500 }

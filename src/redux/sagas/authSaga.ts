@@ -20,7 +20,7 @@ import {
   LoginResponse,
 } from '@/app/auth/type';
 
-import { registerUser, loginUser, logoutUser } from '@/app/API/authAPI';
+import { loginUser, logoutUser, registerUser } from '@/app/api/authAPI';
 import { toast } from 'sonner';
 
 // 🔐 Handle Login
@@ -79,6 +79,7 @@ function* handleRegister(action: PayloadAction<RegisterForm>): Generator {
 function* handleLogout(): Generator {
   try {
     const response: { success: boolean; message: string } = yield call(logoutUser);
+    console.log(response);
     yield put(logoutSuccess());
     toast.success('Logout Successfully !!');
     localStorage.removeItem('token');

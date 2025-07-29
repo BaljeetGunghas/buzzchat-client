@@ -11,3 +11,18 @@ export const resFormat = (
   output,
   ...(token && { token }),
 });
+
+
+export class AppError extends Error {
+    statusCode: number;
+    isOperational: boolean;
+
+    constructor(message: string, statusCode: number, isOperational: boolean = true) {
+        super(message);
+        this.statusCode = statusCode;
+        this.isOperational = isOperational;
+
+        // Set the prototype explicitly to avoid issues with TypeScript and inheritance
+        Object.setPrototypeOf(this, AppError.prototype);
+    }
+}
