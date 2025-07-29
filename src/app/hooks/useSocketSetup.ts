@@ -1,79 +1,49 @@
 // src/hooks/useSocketSetup.ts
-import { useEffect } from "react";
-import socket from "@/app/socket-client";
-import { toast } from "sonner";
-import { useAppDispatch } from "@/redux/hooks";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { fetchChatsRequest, markChatAsRead } from "@/redux/slices/chatListSlice";
-import { fetchOnlineUsersByIds } from "@/redux/slices/onlineUsersSlice";
+'use client'
 
-interface MessagePayload {
-  senderName: string;
-  content: string;
-}
+import { useEffect } from 'react'
+import socket from '@/app/socket-client'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { RootState } from '@/redux/store'
+import { toast } from 'sonner'
+import { fetchChatsRequest, markChatAsRead } from '@/redux/slices/chatListSlice'
+import { fetchOnlineUsersByIds } from '@/redux/slices/onlineUsersSlice'
 
 export const useSocketSetup = () => {
-  const dispatch = useAppDispatch();
-  const { user: USER } = useSelector((state: RootState) => state.auth);
+  const dispatch = useAppDispatch()
+  const { user } = useAppSelector((s: RootState) => s.auth)
 
   useEffect(() => {
-    if (!USER?._id) return;
+    if (!user?._id) return
 
-    const handleConnect = () => {
-      console.log("✅ Socket connected:", socket.id);
-      socket.emit("join", USER._id);
-    };
-
-    const handleReceiveMessage = (data: MessagePayload) => {
-      const beep = new Audio("/sounds/message-rec.mp3");
-      const vibreate = new Audio("/sounds/vibrating.mp3");
-      beep.play().catch((err) => {
-        console.warn("🔇 Beep sound blocked or failed:", err.message);
-      });
-      vibreate.play().catch((err) => {
-        console.warn("🔇 Beep sound blocked or failed:", err.message);
-      });
-
-      toast.info(`New message recived : ${data.content}`);
-
-      dispatch(fetchChatsRequest(USER._id));
-    };
-
-    const handleOnlineUsers = (onlineUserIds: string[]) => {
-      dispatch(fetchOnlineUsersByIds(onlineUserIds));
-    };
-
-    const handleMessagesRead = ({ conversationId}: { conversationId: string; }) => {
-      dispatch(markChatAsRead(conversationId));
-    };
-
-
-
-
-
-
-    // Listen for events
-    socket.on("connect", handleConnect);
-    socket.on("receive_message", handleReceiveMessage);
-    socket.on("online_users", handleOnlineUsers);
-    socket.on("messages_read", handleMessagesRead);
-
-
-
-    // Ensure socket is connected
-    if (!socket.connected) {
-      socket.disconnect(); // optional: reset
-      socket.connect();
-    } else {
-      handleConnect(); // manually emit if already connected
+    const onConnect = () => {
+      console.log('✅ Socket connected:', socket.id)
+      socket.emit('join', user._id)
+    }
+    const onMessage = (data: { content: string }) => {
+      toast.info(`New message: ${data.content}`)
+      dispatch(fetchChatsRequest(user._id))
+    }
+    const onOnline = (ids: string[]) => {
+      dispatch(fetchOnlineUsersByIds(ids))
+    }
+    const onRead = ({ conversationId }: { conversationId: string }) => {
+      dispatch(markChatAsRead(conversationId))
     }
 
+    socket.on('connect', onConnect)
+    socket.on('receive_message', onMessage)
+    socket.on('online_users', onOnline)
+    socket.on('messages_read', onRead)
+
+    // ensure a connection
+    if (!socket.connected) socket.connect()
+
     return () => {
-      socket.off("connect", handleConnect);
-      socket.off("receive_message", handleReceiveMessage);
-      socket.off("online_users", handleOnlineUsers);
-      socket.off("messages_read", handleMessagesRead);
-    };
-  }, [USER, USER?._id, dispatch,]);
-};
+      socket.off('connect', onConnect)
+      socket.off('receive_message', onMessage)
+      socket.off('online_users', onOnline)
+      socket.off('messages_read', onRead)
+    }
+  }, [user, dispatch])
+}

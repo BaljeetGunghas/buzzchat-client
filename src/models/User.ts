@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema<IUserDocument>({
     verificationTokenExpires: { type: Date, default: null },
 
     // Google OAuth fields
-    googleId: { type: String, unique: true, sparse: true, default: null },
+    googleId: { type: String, unique: true, sparse: true },
     loginProvider: { type: String, enum: ['local', 'google'], default: 'local' },
 }, { timestamps: true });
 

@@ -7,9 +7,7 @@ import { useAuthRedirect } from "../hooks/seAuthRedirect";
 import { User } from "@/app/auth/type";
 import { useSocketSetup } from "../hooks/useSocketSetup";
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { io, Socket } from 'socket.io-client'
 
-let socket: Socket
 
 // ✅ Auth context type
 interface AuthContextType {
@@ -24,12 +22,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   useInitializeUser();
   useAuthRedirect();
-  // useSocketSetup();
-   useEffect(() => {
-    fetch('/api/socket')
-    socket = io({ path:'/api/socket', transports:['websocket'], withCredentials:true })
-    // …
-  }, [])
+  useSocketSetup();
+
 
   return (
     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>

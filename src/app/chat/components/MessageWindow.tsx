@@ -1,10 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  fetchMessages,
-  sendMessage as sendMsgAPI,
-} from "@/app/api/chatAPI";
 import { ChatMessage } from "@/app/api/types/message";
 import { Conversation } from "@/app/api/types/conversation";
 import MessageInput from "./MessageInput";
@@ -12,6 +8,7 @@ import { fetchUserConversations } from "@/app/api/conversationsAPI";
 import { fetchChatsRequest } from "@/redux/slices/chatListSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import socket from "@/app/socket-client";
+import { fetchMessages, sendMessage } from "@/app/api/chatAPI";
 
 interface Props {
   friendId: string;
@@ -87,7 +84,7 @@ export default function MessageWindow({ friendId, userId }: Props) {
     if (!message.trim()) return;
 
     try {
-      const response = await sendMsgAPI({
+      const response = await sendMessage({
         senderId: userId,
         receiverId: friendId,
         content: message.trim(),
@@ -111,11 +108,11 @@ export default function MessageWindow({ friendId, userId }: Props) {
   };
 
   return (
-    <div className="flex flex-col flex-1 h-full">
+    <div className="flex flex-col flex-1 h-96">
       {/* Message area */}
       <div
         className="flex-1 p-4 bg-white dark:bg-gray-900 space-y-3 overflow-y-auto overflow-x-hidden"
-        style={{ maxHeight: "83vh", minHeight: "83vh" }}
+        // style={{ maxHeight: "83vh", minHeight: "83vh" }}
       >
         {messages.map((msg) => (
           <div
